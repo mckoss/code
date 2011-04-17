@@ -1,0 +1,12 @@
+{
+  "files": {
+    "code-all.js": [
+      "src/namespace-plus.js",
+      "src/autoresize.jquery.js",
+	  "src/showdown.js",
+      "src/stage.js"
+    ]
+  },
+  "minify": false,
+  "uploadIndividualFiles": false
+}
