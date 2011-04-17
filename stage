@@ -25,12 +25,12 @@
     </h1>
 
     <div id="stage">
-		<pre class="printed" id="output"></pre>
+		<pre id="output"></pre>
     </div>
 
-	<div>
-		<input id="command"/>
-		<button id="exec">Exec</button>
+	<div id="command">
+		<input type=button id="exec" value="Exec"/>
+		<input type=text id="command-line"/>
 	</div>
 	
 	<div class="menu-bar">
@@ -38,8 +38,8 @@
 		<input type=button id="run" value="Run"/>
 	</div>
 	<div id="code">
-		<textarea class="if-edit" id="editor"></textarea>
 		<pre class="if-not-edit" id="display"></pre>
+		<textarea class="if-edit" id="editor"></textarea>
 	</div>
 
     <div id="footer">

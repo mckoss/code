@@ -26,6 +26,7 @@ li { line-height: 120%; margin-bottom: 8px; }
 }
 
 div.menu-bar {
+  clear: both;
   font-size: 0.5em;
   text-align: right;
 }
@@ -38,7 +39,22 @@ div.menu-bar {
   color: white;
   background-color: black;
   height: 100%;
-  overflow: scroll;
+  overflow: auto;
+}
+
+#command {
+  margin-top: 10px;
+}
+
+#command input[type=button] {
+  float: right;
+}
+
+#command input[type=text] {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 100%;
+  display: inline-block;
+  width: 90%;
 }
 
 #code {
