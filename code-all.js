@@ -303,7 +303,7 @@ namespace.module('org.startpad.string', function (exports, require) {
   var funcs = require('org.startpad.funcs');
   
   exports.extend({
-    'VERSION': '0.1.1',
+    'VERSION': '0.1.2',
     'patch': patch,
     'format': format
   });
@@ -332,6 +332,9 @@ namespace.module('org.startpad.string', function (exports, require) {
   // property names.
   function format(st, args, re) {
       re = re || reFormat;
+      if (st == undefined) {
+          return "undefined";
+      }
       st = st.toString();
       st = st.replace(re, function(whole, key) {
           var value = args;
@@ -1865,7 +1868,8 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
     }
 
     function write(s) {
-        s = string.format.apply(undefined, arguments);
+        var args = Array.prototype.slice.call(arguments, 1);
+        s = String.prototype.format.apply(s, args);
         s = '\n' + format.escapeHTML(s);
         var $text = $(doc['output-text']);
         $text.append(s);
