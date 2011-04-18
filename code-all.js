@@ -1,5 +1,3 @@
-
-/* src/namespace-plus.js */
 /* Namespace.js - modular namespaces in JavaScript
 
    by Mike Koss - placed in the public domain
@@ -7,8 +5,9 @@
 
 (function(global) {
     var globalNamespace = global['namespace'];
-    var Module;
-    var VERSION = '3.0.0';
+    var VERSION = '3.0.1';
+    
+    function Module() {}
 
     function numeric(s) {
         if (!s) {
@@ -24,7 +23,6 @@
         }
         Module = globalNamespace.constructor;
     } else {
-        Module = function () {};
         global['namespace'] = globalNamespace = new Module();
     }
     globalNamespace['VERSION'] = VERSION;
@@ -301,9 +299,62 @@ namespace.module('org.startpad.funcs', function (exports, require) {
     }
 
 });
+namespace.module('org.startpad.string', function (exports, require) {
+  var funcs = require('org.startpad.funcs');
+  
+  exports.extend({
+    'VERSION': '0.1.1',
+    'patch': patch,
+    'format': format
+  });
+  
+  function patch() {
+      funcs.monkeyPatch(String, 'org.startpad.string', exports.VERSION, {
+          'format': function () {
+              if (arguments.length == 1 && typeof arguments[0] == 'object') {
+                  return format(this, arguments[0]);
+              } else {
+                  return format(this, arguments);
+              }
+            }
+      });
+      return exports;
+  }
+  
+  var reFormat = /\{\s*([^} ]+)\s*\}/g;
+  
+  // Format a string using values from a dictionary or array.
+  // {n} - positional arg (0 based)
+  // {key} - object property (first match)
+  // .. same as {0.key}
+  // {key1.key2.key3} - nested properties of an object
+  // keys can be numbers (0-based index into an array) or
+  // property names.
+  function format(st, args, re) {
+      re = re || reFormat;
+      st = st.toString();
+      st = st.replace(re, function(whole, key) {
+          var value = args;
+          var keys = key.split('.');
+          for (var i = 0; i < keys.length; i++) {
+              key = keys[i];
+              var n = parseInt(key);
+              if (!isNaN(n)) {
+                  value = value[n];
+              } else {
+                  value = value[key];
+              }
+              if (value == undefined) {
+                  return "";
+              }
+          }
+          // Implicit toString() on this.
+          return value;
+      });
+      return st;
+  }
 
-/* src/autoresize.jquery.js */
-/*
+});/*
  * jQuery autoResize (textarea auto-resizer)
  * @copyright James Padolsey http://james.padolsey.com
  * @version 1.04
@@ -400,9 +451,7 @@ namespace.module('org.startpad.funcs', function (exports, require) {
 
 
 
-})(jQuery);
-/* src/showdown.js */
-//
+})(jQuery);//
 // showdown.js -- A javascript port of Markdown.
 //
 // Copyright (c) 2007 John Fraser.
@@ -1697,12 +1746,11 @@ var escapeCharacters_callback = function(wholeMatch,m1) {
 	return "~E"+charCodeToEscape+"E";
 }
 
-} // end of Showdown.converter
-/* src/stage.js */
-/*globals Showdown */
+} // end of Showdown.converter/*globals Showdown */
 namespace.module('com.pageforest.code.stage', function(exports, require) {
     var dom = require('org.startpad.dom');
     var clientLib = require('com.pageforest.client');
+    var string = require('org.startpad.string');
 
     exports.extend({
         'main': main
@@ -1742,6 +1790,18 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
         client = new clientLib.Client(stage);
         client.addAppBar();
         $(doc.edit).click(toggleEditor);
+        $(doc.exec).click(function () {
+            evalString($(doc['command-line']).val());
+        });
+        $(doc.run).click(function () {
+            evalString($(doc.editor).val());
+        });
+        $(doc['command-line']).keydown(function (evt) {
+            if (evt.keyCode == 13) {
+                evt.preventDefault();
+                evalString($(doc['command-line']).val());
+            }
+        })
     }
     
     function toggleEditor(evt) {
@@ -1759,6 +1819,17 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
             $(doc.page).removeClass('edit');
         }
         $(doc.edit).val(editVisible ? 'Hide' : 'Edit');
+    }
+    
+    var context = {};
+     
+    function evalString(s) {
+        return eval(s);
+    }
+
+    function write(s) {
+        s = string.format(s, Array.prototype.slice.call(arguments, 1));
+        $(doc.output).text(s);
     }
 
     // For offline - capable applications

@@ -2,6 +2,7 @@
 namespace.module('com.pageforest.code.stage', function(exports, require) {
     var dom = require('org.startpad.dom');
     var clientLib = require('com.pageforest.client');
+    var string = require('org.startpad.string');
 
     exports.extend({
         'main': main
@@ -41,6 +42,18 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
         client = new clientLib.Client(stage);
         client.addAppBar();
         $(doc.edit).click(toggleEditor);
+        $(doc.exec).click(function () {
+            evalString($(doc['command-line']).val());
+        });
+        $(doc.run).click(function () {
+            evalString($(doc.editor).val());
+        });
+        $(doc['command-line']).keydown(function (evt) {
+            if (evt.keyCode == 13) {
+                evt.preventDefault();
+                evalString($(doc['command-line']).val());
+            }
+        })
     }
     
     function toggleEditor(evt) {
@@ -58,6 +71,17 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
             $(doc.page).removeClass('edit');
         }
         $(doc.edit).val(editVisible ? 'Hide' : 'Edit');
+    }
+    
+    var context = {};
+     
+    function evalString(s) {
+        return eval(s);
+    }
+
+    function write(s) {
+        s = string.format(s, Array.prototype.slice.call(arguments, 1));
+        $(doc.output).text(s);
     }
 
     // For offline - capable applications
