@@ -39,24 +39,39 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
 
     function main() {
 		handleAppCache();
+		
         doc = dom.bindIDs();
+        doc.$commandLine = $(doc['command-line']);
+        doc.$editor = $(doc.editor);
+        
         stage = new Stage();
         client = new clientLib.Client(stage);
         client.addAppBar();
+        
+        doc.$commandLine.focus();
+        
         $(doc.edit).click(toggleEditor);
+        
+        function enterCommand() {
+            var command = doc.$commandLine.val();
+            write('> ' + command, {className: 'command'});
+            evalString(command);
+            doc.$commandLine.focus().select();   
+        }
+
         $(doc.exec).click(function () {
-            evalString($(doc['command-line']).val());
-            $(doc['command-line']).focus().select();
+            enterCommand();
         });
-        $(doc.run).click(function () {
-            evalString($(doc.editor).val());
-        });
-        $(doc['command-line']).keydown(function (evt) {
+
+        doc.$commandLine.keydown(function (evt) {
             if (evt.keyCode == 13) {
                 evt.preventDefault();
-                evalString($(doc['command-line']).val());
-                $(doc['command-line']).focus().select();
+                enterCommand();
             }
+        });
+        
+        $(doc.run).click(function () {
+            evalString(doc.$editor.val());
         });
     }
     
@@ -84,12 +99,13 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
         try {
             value = eval(s);
         } catch (e) {
-            value = "Exception: " + e.message;
+            write("Exception: " + e.message, {className: 'error'});
+            return;
         }
         writeValue(value);
     }
     
-    function writeValue(value) {
+    function writeValue(value, options) {
         if (value == undefined) {
             return;
         }
@@ -107,19 +123,24 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
             } else {
                 var prefix = types.getFunctionName(value.constructor) + ': ';
                 try {
-                    value = prefix + JSON.stringify(value);
+                    value = prefix + JSON.stringify(value, undefined, 2);
                 } catch (e3) {
                     value += prefix + "{...}";
                 }
             }   
         }
-        write(value);
+        write(value, options);
     }
 
     function write(s) {
+        var options = {className: 'output'};
         var args = Array.prototype.slice.call(arguments, 1);
+        if (types.isType(args[0], 'object') && args[0].className) {
+            types.extend(options, args[0]);
+            args.unshift();
+        }
         s = String.prototype.format.apply(s, args);
-        s = '\n' + format.escapeHTML(s);
+        s = '<p class="{className}">'.format(options) + format.escapeHTML(s) + '</p>';
         var $text = $(doc['output-text']);
         $text.append(s);
         $(doc.output).scrollTop($text.height());

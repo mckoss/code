@@ -43,6 +43,10 @@ div.menu-bar {
   padding: 5px 10px;
 }
 
+#output p { margin: 0; }
+p.error { color: red; }
+p.command { color: green; }
+
 #command {
   margin: 20px 0;
 }

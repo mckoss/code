@@ -44,7 +44,8 @@
 		</div>
 
 		<div id="footer">
-			<a target="_blank" href="https://github.com/mckoss/code">Playground Source Code</a> |
+			<a href="/">Playground Home</a> |
+			<a target="_blank" href="https://github.com/mckoss/code">Source Code @GitHub</a> |
 			<a href="http://www.pageforest.com">Pageforest.com</a>
 		</div> <!-- footer -->
 
