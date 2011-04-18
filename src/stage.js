@@ -4,6 +4,7 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
     var clientLib = require('com.pageforest.client');
     var string = require('org.startpad.string');
     var format = require('org.startpad.format');
+    var types = require('org.startpad.types');
 
     exports.extend({
         'main': main
@@ -45,6 +46,7 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
         $(doc.edit).click(toggleEditor);
         $(doc.exec).click(function () {
             evalString($(doc['command-line']).val());
+            $(doc['command-line']).focus().select();
         });
         $(doc.run).click(function () {
             evalString($(doc.editor).val());
@@ -53,6 +55,7 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
             if (evt.keyCode == 13) {
                 evt.preventDefault();
                 evalString($(doc['command-line']).val());
+                $(doc['command-line']).focus().select();
             }
         });
     }
@@ -77,14 +80,47 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
     var context = {};
      
     function evalString(s) {
-        return eval(s);
+        var value;
+        try {
+            value = eval(s);
+        } catch (e) {
+            value = "Exception: " + e.message;
+        }
+        writeValue(value);
+    }
+    
+    function writeValue(value) {
+        if (value == undefined) {
+            return;
+        }
+
+        if (typeof value == 'string') {
+            value = value.replace(/"/g, '""');
+            value = '"' + value + '"';
+        }
+        if (typeof value == 'function') {
+            value = "function " + types.getFunctionName(value);
+        }
+        if (typeof value == 'object') {
+            if (value === null) {
+                value = "null";
+            } else {
+                var prefix = types.getFunctionName(value.constructor) + ': ';
+                try {
+                    value = prefix + JSON.stringify(value);
+                } catch (e3) {
+                    value += prefix + "{...}";
+                }
+            }   
+        }
+        write(value);
     }
 
     function write(s) {
         s = string.format.apply(undefined, arguments);
         s = '\n' + format.escapeHTML(s);
         var $text = $(doc['output-text']);
-        $text.append(s)
+        $text.append(s);
         $(doc.output).scrollTop($text.height());
     }
 
