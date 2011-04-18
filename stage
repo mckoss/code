@@ -25,7 +25,7 @@
     </h1>
 
     <div id="stage">
-		<pre id="output"></pre>
+		<pre id="output"><code id="output-text"></code></pre>
     </div>
 
 	<div id="command">
