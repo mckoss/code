@@ -38,7 +38,7 @@
 		<input type=button id="run" value="Run"/>
 	</div>
 	<div id="code">
-		<pre class="if-not-edit" id="display"></pre>
+		<pre class="if-not-edit"><code id="display"></code></pre>
 		<textarea class="if-edit" id="editor"></textarea>
 	</div>
 

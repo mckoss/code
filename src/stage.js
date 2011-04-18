@@ -81,7 +81,7 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
     }
 
     function write(s) {
-        s = string.format(s, Array.prototype.slice.call(arguments, 1));
+        s = string.format.apply(undefined, arguments);
         s = '\n' + format.escapeHTML(s);
         var $text = $(doc['output-text']);
         $text.append(s)

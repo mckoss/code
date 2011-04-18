@@ -44,7 +44,7 @@ div.menu-bar {
 }
 
 #command {
-  margin-top: 10px;
+  margin: 20px 0;
 }
 
 #command input[type=button] {
@@ -67,10 +67,9 @@ div.menu-bar {
   overflow: hidden;
 }
 
-#display {
-  font-family: inherit;
-  overflow: hidden;
-  padding: 5px;
+code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 100%;
   margin: 0;
 }
 
