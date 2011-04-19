@@ -34,29 +34,29 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
           },
           readers: ['public']
         };
-      }		
+      }
     });
 
     function main() {
-		handleAppCache();
-		
+        handleAppCache();
+
         doc = dom.bindIDs();
         doc.$commandLine = $(doc['command-line']);
         doc.$editor = $(doc.editor);
-        
+
         stage = new Stage();
         client = new clientLib.Client(stage);
         client.addAppBar();
-        
+
         doc.$commandLine.focus();
-        
+
         $(doc.edit).click(toggleEditor);
-        
+
         function enterCommand() {
             var command = doc.$commandLine.val();
             write('> ' + command, {className: 'command'});
             evalString(command);
-            doc.$commandLine.focus().select();   
+            doc.$commandLine.focus().select();
         }
 
         $(doc.exec).click(function () {
@@ -69,12 +69,12 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
                 enterCommand();
             }
         });
-        
+
         $(doc.run).click(function () {
             evalString(doc.$editor.val());
         });
     }
-    
+
     function toggleEditor(evt) {
         editVisible = !editVisible;
         if (editVisible) {
@@ -91,9 +91,9 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
         }
         $(doc.edit).val(editVisible ? 'Hide' : 'Edit');
     }
-    
+
     var context = {};
-     
+
     function evalString(s) {
         var value;
         try {
@@ -104,7 +104,7 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
         }
         writeValue(value);
     }
-    
+
     function writeValue(value, options) {
         if (value == undefined) {
             return;
@@ -127,7 +127,7 @@ namespace.module('com.pageforest.code.stage', function(exports, require) {
                 } catch (e3) {
                     value += prefix + "{...}";
                 }
-            }   
+            }
         }
         write(value, options);
     }
