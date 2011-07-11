@@ -45,7 +45,7 @@ div.menu-bar {
 
 #output p { margin: 0; }
 p.error { color: red; }
-p.command { color: green; }
+p.command { color: lightgreen; }
 
 #command {
   margin: 20px 0;

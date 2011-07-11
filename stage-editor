@@ -1,34 +1,45 @@
 <!DOCTYPE html>
-<html manifest="/app.manifest">
+<html manifest="/app.manifest-disabled">
 <head>
-<title>Code Playground</title>
+<title>Code Playground Editor</title>
 
 <link rel="icon" type="image/png" href="/images/icon.png" />
 <link rel="apple-touch-icon" href="/images/touch.png" />
 
-<link rel="stylesheet" type="text/css" href="/styles/main.css" />
+<link rel="stylesheet" type="text/css" href="/styles/editor.css" />
 <link rel="stylesheet" type="text/css" href="/lib/beta/css/client.css" />
+
+<script type="text/javascript" src="/lib/beta/js/pf-client.js"></script>
+<script type="text/javascript" src="/editor-all.js"></script>
+
+<script type="text/javascript">
+  $(document).ready(namespace.com.pageforest.code.editor.onReady);
+</script>
 
 </head>
 
 <body>
   <div id="page">
     <h1 id="page-heading">
-      <span id="title">Code Playground</span>
+      <span id="title">New Lesson</span>
+      <span class="menu-bar">
+        <input type="button" id="edit" value="Edit"/>
+      </span>
     </h1>
 
-    <p>
-	Welcome to the Code Playground.  You can use this site to create staged environments
-	for your users to experiment with JavaScript API's or language features.
-    </p>
+    <div class="if_edit" id="inputBlock">
+      <textarea id="editor"></textarea>
+    </div>
 
-	<ul>
-		<li><a href="/stage-editor">Create a new Stage</a></li>
-	</ul>
+    <div id="outputBlock">
+      <div id="output"></div>
+    </div>
 
     <div id="footer">
       <hr/>
+      <a target="_blank" href="http://daringfireball.net/projects/markdown/syntax">Markdown Help</a> |
       <a target="_blank" href="https://github.com/mckoss/code">Source Code</a> |
+      <a href="http://www.pageforest.com">Pageforest.com</a>
       <a href="http://www.pageforest.com">Pageforest.com</a>
     </div> <!-- footer -->
 
