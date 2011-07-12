@@ -1,5 +1,6 @@
 /*jslint evil:true */
 var types = require('org.startpad.types');
+require('org.startpad.funcs').patch();
 var base = require('org.startpad.base');
 var format = require('org.startpad.format');
 var string = require('org.startpad.string').patch();
@@ -183,7 +184,25 @@ function updateScriptSections(context) {
 
 function updateChallenges(context) {
     var challenges = $('challenge', context);
+    var tests = [];
     var printed;
+
+    function onChallengeChange(i) {
+        var test = tests[i];
+        var code = test.textarea.value;
+        $('#test_' + i).empty();
+
+        try {
+            makeNamespace(code,
+                          test.prefix,
+                          test.suffix,
+                          require('challenge_' + i));
+            ut.test(i, test.nsTest.testFunction);
+        } catch (e) {
+            var $results = $('#test_' + testInfo.name);
+            $results.append('<div class="test FAIL">{0}<div>'.format(e));
+        }
+    }
 
     for (var i = 0; i < challenges.length; i++) {
         var challenge = challenges[i];
@@ -191,31 +210,31 @@ function updateChallenges(context) {
         var code = $('code', challenge).text();
         var testCode = $('test', challenge).text();
         var suffix = $('prefix', challenge).text();
-        $(challenge).html('<textarea>' + format.escapeHTML(code) + '</textarea>');
-        $(challenge).after('<div class="test-results" id="test_{0}"></div>'.format(i));
+        $(challenge).html('<textarea></textarea>');
+        $('textarea', challenge)
+            .val(code)
+            .bind('keyup', onChallengeChange.curry(i))
+            .autoResize({limit: 1000});
+        $(challenge).after('<pre class="test-results" id="test_{0}"></pre>'.format(i));
 
-        var nsChallenge = makeNamespace(code,
-                                        prefix,
-                                        suffix);
-        namespace.challenge = nsChallenge;
         var nsTest = makeNamespace(testCode,
                                    "var ut = require('com.jquery.qunit');" +
-                                   "var challenge = require('challenge');" +
+                                   "var challenge = require('challenge_{0}');".format(i) +
                                    "exports.testFunction = function testFunction() {",
                                    "}");
-        nsTest.challenge = nsChallenge;
-        try {
-            ut.test(i, nsTest.testFunction);
-        } catch (e) {
-        }
+        tests[i] = {nsTest: nsTest,
+                    prefix: prefix,
+                    suffix: suffix,
+                    textarea: $('textarea', challenge)[0]};
+        onChallengeChange(i);
     }
 }
 
-function makeNamespace(code, prefix, suffix) {
+function makeNamespace(code, prefix, suffix, ns) {
     prefix = prefix || '';
     suffix = suffix || '';
+    ns = ns || {};
 
-    var ns = {};
     var closure = new Function('exports', 'require', prefix + code + suffix);
     closure(ns, require);
     return ns;

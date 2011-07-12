@@ -30,7 +30,7 @@ function onEditChange() {
         nsdoc.updateScriptSections(doc.output);
         nsdoc.updateChallenges(doc.output);
     } catch (e) {
-        $(doc.output).text("Error: " + e.message);
+        $(doc.output).text("Render error: " + e.message);
     }
 }
 
