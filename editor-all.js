@@ -3409,7 +3409,10 @@ function updateChallenges(context) {
                                 test: test.testCode});
             hangTimer = setTimeout(function () {
                 var $results = $('#test_' + i);
-                $results.append('<div class="test-status">You may have an infinite loop?...</div>');
+                $results.append('<div class="test-status">You may have an ' +
+                                '<a target="_blank" href="http://en.wikipedia.org/wiki/Infinite_loop">' +
+                                'infinite loop</a>...' +
+                                '</div>');
             }, 10000);
             tester.onmessage = function (event) {
                 // { challenge: number, type: 'start'/'test'/'done'/'error',
