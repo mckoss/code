@@ -20,10 +20,8 @@ types.extend(namespace.com.jquery.qunit.QUnit, {
     },
 
     log: function (info) {
-        if (!info.result) {
-            if (!info.message) {
-                info.message = "Expected: " + info.expected + ", Actual: " + info.actual;
-            }
+        if (!info.message) {
+            info.message = "Expected: " + info.expected + ", Actual: " + info.actual;
         }
         var $results = $('#test_' + testInfo.name);
         $results.append('<div class="test {0}">{0}: {1}<div>'.format(info.result ? "PASS" : "FAIL",
