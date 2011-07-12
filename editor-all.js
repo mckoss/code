@@ -3219,6 +3219,7 @@ function handleAppCache() {
 /* Source: src/nsdoc.js */
 namespace.module('org.startpad.nsdoc', function (exports, require) {
 /*jslint evil:true */
+var types = require('org.startpad.types');
 var base = require('org.startpad.base');
 var format = require('org.startpad.format');
 var string = require('org.startpad.string').patch();
@@ -3228,6 +3229,25 @@ exports.extend({
     'namespaceDoc': namespaceDoc,
     'updateScriptSections': updateScriptSections,
     'updateChallenges': updateChallenges
+});
+
+var testInfo;
+
+types.extend(namespace.com.jquery.qunit.QUnit, {
+    testStart: function (info) {
+        testInfo = info;
+    },
+
+    log: function (info) {
+        if (!info.result) {
+            if (!info.message) {
+                info.message = "Expected: " + info.expected + ", Actual: " + info.actual;
+            }
+        }
+        var $results = $('#test_' + testInfo.name);
+        $results.append('<div class="test {0}">{0}: {1}<div>'.format(info.result ? "PASS" : "FAIL",
+                                                                     info.message));
+    }
 });
 
 var reArgs = /^function\s+\S*\(([^\)]*)\)/;
@@ -3392,6 +3412,8 @@ function updateChallenges(context) {
         var testCode = $('test', challenge).text();
         var suffix = $('prefix', challenge).text();
         $(challenge).html('<textarea>' + format.escapeHTML(code) + '</textarea>');
+        $(challenge).after('<div class="test-results" id="test_{0}"></div>'.format(i));
+
         var nsChallenge = makeNamespace(code,
                                         prefix,
                                         suffix);
@@ -3403,7 +3425,7 @@ function updateChallenges(context) {
                                    "}");
         nsTest.challenge = nsChallenge;
         try {
-            ut.test("Challenge Tests", nsTest.testFunction);
+            ut.test(i, nsTest.testFunction);
         } catch (e) {
         }
     }

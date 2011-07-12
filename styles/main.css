@@ -35,7 +35,7 @@ div.menu-bar {
   height: 400px;
 }
 
-#output {
+#console {
   color: white;
   background-color: black;
   height: 100%;
@@ -43,7 +43,7 @@ div.menu-bar {
   padding: 5px 10px;
 }
 
-#output p { margin: 0; }
+#console p { margin: 0; }
 p.error { color: red; }
 p.command { color: lightgreen; }
 
@@ -112,4 +112,12 @@ td {
   padding-top: 5px;
   text-align:center;
   border-top: 1px solid #444;
+}
+
+div.FAIL {
+color: red;
+}
+
+div.PASS {
+color: green;
 }
