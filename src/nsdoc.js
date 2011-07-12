@@ -212,8 +212,10 @@ function updateChallenges(context) {
         var suffix = $('prefix', challenge).text();
         $(challenge).html('<textarea></textarea>');
         var textarea = $('textarea', challenge)[0];
-        $(textarea).val(code).bind('keyup', onChallengeChange.curry(i));
-        $(textarea).autoResize({limit: 1000});
+        $(textarea)
+            .val(trimCode(code))
+            .bind('keyup', onChallengeChange.curry(i))
+            .autoResize({limit: 1000});
         $(challenge).after('<pre class="test-results" id="test_{0}"></pre>'.format(i));
 
         var nsTest = makeNamespace(testCode,
@@ -239,4 +241,18 @@ function makeNamespace(code, prefix, suffix, ns) {
     var closure = new Function('exports', 'require', prefix + code + suffix);
     closure(ns, require);
     return ns;
+}
+
+function trimCode(s) {
+    s = s.replace(/^\n+|\s+$/g, '');
+    var match = /^\s+/.exec(s);
+    if (match) {
+        var pre = new RegExp('^\\s{' + match[0].length + '}');
+        var lines = s.split('\n');
+        for (var i = 0; i < lines.length; i++) {
+            lines[i] = lines[i].replace(pre, '');
+        }
+        s = lines.join('\n');
+    }
+    return s;
 }
