@@ -3383,6 +3383,7 @@ function updateScriptSections(context) {
 }
 
 var tester;
+var hangTimer;
 
 function updateChallenges(context) {
     var challenges = $('challenge', context);
@@ -3392,7 +3393,11 @@ function updateChallenges(context) {
     function onChallengeChange(i) {
         var test = tests[i];
         var code = test.textarea.value;
-        $('#test_' + i).empty().append("<div>Running...</div>");
+        $('#test_' + i).empty();
+        if (hangTimer) {
+            clearTimeout(hangTimer);
+            hangTimer = undefined;
+        }
 
         try {
             if (tester) {
@@ -3402,13 +3407,40 @@ function updateChallenges(context) {
             tester.postMessage({challenge: i,
                                 code: test.prefix + code + test.suffix,
                                 test: test.testCode});
+            hangTimer = setTimeout(function () {
+                var $results = $('#test_' + i);
+                $results.append('<div class="test-status">You may have an infinite loop?...</div>');
+            }, 10000);
             tester.onmessage = function (event) {
-                // { challenge: number, info: {result: string, message: string} }
-                console.log(event);
+                // { challenge: number, type: 'start'/'test'/'done'/'error',
+                //   info: {result: string, message: string} }
                 var data = event.data;
                 var $results = $('#test_' + data.challenge);
-                $results.append('<div class="test {0}">{0}: {1}<div>'
-                                .format(data.info.result ? "PASS" : "FAIL", data.info.message));
+                switch (data.type) {
+                case 'start':
+                    $results.append('<div class="test-status">Starting...</div>');
+                    break;
+                case 'error':
+                    $results.append('<div class="test-status FAIL">Code error: {0}</div>'
+                                    .format(data.info.message));
+                    clearTimeout(hangTimer);
+                    hangTimer = undefined;
+                    break;
+                case 'done':
+                    $results.append(('<div class="test-status {0}">Test Complete: ' +
+                                     '{1} errors out of {2} tests.</div>')
+                                    .format(
+                                        data.info.failed > 0 ? 'FAIL' : 'PASS',
+                                        data.info.passed,
+                                        data.info.total));
+                    clearTimeout(hangTimer);
+                    hangTimer = undefined;
+                    break;
+                case 'test':
+                    $results.append('<div class="test {0}">{0}: {1}<div>'
+                                    .format(data.info.result ? 'PASS' : 'FAIL', data.info.message));
+                    break;
+                }
             };
         } catch (e) {
             var $results = $('#test_' + i);

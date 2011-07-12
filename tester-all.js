@@ -1820,13 +1820,18 @@ var testInfo;
 types.extend(ut.QUnit, {
     testStart: function (info) {
         testInfo = info;
+        postMessage({challenge: info.name, type: 'start', info: info});
+    },
+
+    testDone: function (info) {
+        postMessage({challenge: info.name, type: 'done', info: info});
     },
 
     log: function (info) {
         if (!info.message) {
             info.message = "Expected: " + info.expected + ", Actual: " + info.actual;
         }
-        postMessage({challenge: testInfo.name, info: info});
+        postMessage({challenge: testInfo.name, type: 'test', info: info});
     }
 });
 
@@ -1850,6 +1855,7 @@ function onMessage(event) {
         ut.QUnit.start();
     } catch (e) {
         postMessage({challenge: data.challenge,
+                     type: 'error',
                      info: {result: false, message: e.toString()}
                     });
     }

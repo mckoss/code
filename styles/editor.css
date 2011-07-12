@@ -94,3 +94,4 @@ div.test-results {
 
 div.FAIL { color: red; }
 div.PASS { color: green; }
+div.test-status { font-weight: bold; }
