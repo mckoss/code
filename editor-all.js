@@ -3419,8 +3419,8 @@ function updateChallenges(context) {
                           require('challenge_' + i));
             ut.test(i, test.nsTest.testFunction);
         } catch (e) {
-            var $results = $('#test_' + testInfo.name);
-            $results.append('<div class="test FAIL">{0}<div>'.format(e));
+            var $results = $('#test_' + i);
+            $results.append('<div class="test FAIL">{0}<div>'.format(e.toString()));
         }
     }
 
@@ -3431,10 +3431,9 @@ function updateChallenges(context) {
         var testCode = $('test', challenge).text();
         var suffix = $('prefix', challenge).text();
         $(challenge).html('<textarea></textarea>');
-        $('textarea', challenge)
-            .val(code)
-            .bind('keyup', onChallengeChange.curry(i))
-            .autoResize({limit: 1000});
+        var textarea = $('textarea', challenge)[0];
+        $(textarea).val(code).bind('keyup', onChallengeChange.curry(i));
+        $(textarea).autoResize({limit: 1000});
         $(challenge).after('<pre class="test-results" id="test_{0}"></pre>'.format(i));
 
         var nsTest = makeNamespace(testCode,
@@ -3442,10 +3441,12 @@ function updateChallenges(context) {
                                    "var challenge = require('challenge_{0}');".format(i) +
                                    "exports.testFunction = function testFunction() {",
                                    "}");
-        tests[i] = {nsTest: nsTest,
-                    prefix: prefix,
-                    suffix: suffix,
-                    textarea: $('textarea', challenge)[0]};
+        tests[i] = {
+            nsTest: nsTest,
+            prefix: prefix,
+            suffix: suffix,
+            textarea: textarea
+        };
         onChallengeChange(i);
     }
 }
