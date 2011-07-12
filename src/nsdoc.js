@@ -1,5 +1,4 @@
 /*jslint evil:true */
-var types = require('org.startpad.types');
 require('org.startpad.funcs').patch();
 var base = require('org.startpad.base');
 var format = require('org.startpad.format');
@@ -10,23 +9,6 @@ exports.extend({
     'namespaceDoc': namespaceDoc,
     'updateScriptSections': updateScriptSections,
     'updateChallenges': updateChallenges
-});
-
-var testInfo;
-
-types.extend(namespace.com.jquery.qunit.QUnit, {
-    testStart: function (info) {
-        testInfo = info;
-    },
-
-    log: function (info) {
-        if (!info.message) {
-            info.message = "Expected: " + info.expected + ", Actual: " + info.actual;
-        }
-        var $results = $('#test_' + testInfo.name);
-        $results.append('<div class="test {0}">{0}: {1}<div>'.format(info.result ? "PASS" : "FAIL",
-                                                                     info.message));
-    }
 });
 
 var reArgs = /^function\s+\S*\(([^\)]*)\)/;
@@ -180,6 +162,8 @@ function updateScriptSections(context) {
     }
 }
 
+var tester;
+
 function updateChallenges(context) {
     var challenges = $('challenge', context);
     var tests = [];
@@ -188,14 +172,24 @@ function updateChallenges(context) {
     function onChallengeChange(i) {
         var test = tests[i];
         var code = test.textarea.value;
-        $('#test_' + i).empty();
+        $('#test_' + i).empty().append("<div>Running...</div>");
 
         try {
-            makeNamespace(code,
-                          test.prefix,
-                          test.suffix,
-                          require('challenge_' + i));
-            ut.test(i, test.nsTest.testFunction);
+            if (tester) {
+                tester.terminate();
+            }
+            tester = new Worker('tester-all.js');
+            tester.postMessage({challenge: i,
+                                code: test.prefix + code + test.suffix,
+                                test: test.testCode});
+            tester.onmessage = function (event) {
+                // { challenge: number, info: {result: string, message: string} }
+                console.log(event);
+                var data = event.data;
+                var $results = $('#test_' + data.challenge);
+                $results.append('<div class="test {0}">{0}: {1}<div>'
+                                .format(data.info.result ? "PASS" : "FAIL", data.info.message));
+            };
         } catch (e) {
             var $results = $('#test_' + i);
             $results.append('<div class="test FAIL">{0}<div>'.format(e.toString()));
@@ -204,41 +198,22 @@ function updateChallenges(context) {
 
     for (var i = 0; i < challenges.length; i++) {
         var challenge = challenges[i];
-        var prefix = $('prefix', challenge).text();
+        tests[i] = {
+            prefix: $('prefix', challenge).text(),
+            suffix: $('suffix', challenge).text(),
+            testCode: $('test', challenge).text()
+        };
         var code = $('code', challenge).text();
-        var testCode = $('test', challenge).text();
-        var suffix = $('prefix', challenge).text();
         $(challenge).html('<textarea></textarea>');
-        var textarea = $('textarea', challenge)[0];
+        var textarea = tests[i].textarea = $('textarea', challenge)[0];
         $(textarea)
             .val(trimCode(code))
             .bind('keyup', onChallengeChange.curry(i))
             .autoResize({limit: 1000});
         $(challenge).after('<pre class="test-results" id="test_{0}"></pre>'.format(i));
 
-        var nsTest = makeNamespace(testCode,
-                                   "var ut = require('com.jquery.qunit');" +
-                                   "var challenge = require('challenge_{0}');".format(i) +
-                                   "exports.testFunction = function testFunction() {",
-                                   "}");
-        tests[i] = {
-            nsTest: nsTest,
-            prefix: prefix,
-            suffix: suffix,
-            textarea: textarea
-        };
         onChallengeChange(i);
     }
-}
-
-function makeNamespace(code, prefix, suffix, ns) {
-    prefix = prefix || '';
-    suffix = suffix || '';
-    ns = ns || {};
-
-    var closure = new Function('exports', 'require', prefix + code + suffix);
-    closure(ns, require);
-    return ns;
 }
 
 function trimCode(s) {

@@ -11,6 +11,11 @@
       { "path": "src/editor.js", "namespace": "com.pageforest.code.editor" },
       { "path": "src/nsdoc.js", "namespace": "org.startpad.nsdoc" },
       "src/autoresize.jquery.js"
+    ],
+    "tester-all.js": [
+      "src/namespace-plus.js",
+      "src/qunit.js",
+      { "path": "src/tester.js", "namespace": "com.pageforest.code.tester" }
     ]
   },
   "minify": false,
