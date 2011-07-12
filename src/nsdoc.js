@@ -166,7 +166,7 @@ var tester;
 var hangTimer;
 
 function updateChallenges(context) {
-    var challenges = $('challenge', context);
+    var challenges = $('div.challenge', context);
     var tests = [];
     var printed;
 
@@ -211,7 +211,7 @@ function updateChallenges(context) {
                     break;
                 case 'done':
                     $results.append(('<div class="test-status {0}">Test Complete: ' +
-                                     '{1} errors out of {2} tests.</div>')
+                                     '{1} correct out of {2} tests.</div>')
                                     .format(
                                         data.info.failed > 0 ? 'FAIL' : 'PASS',
                                         data.info.passed,
