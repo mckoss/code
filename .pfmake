@@ -7,6 +7,7 @@
     "editor-all.js": [
       "src/namespace-plus.js",
       "src/showdown.js",
+      "src/qunit.js",
       { "path": "src/editor.js", "namespace": "com.pageforest.code.editor" },
       { "path": "src/nsdoc.js", "namespace": "org.startpad.nsdoc" },
       "src/autoresize.jquery.js"

@@ -1,10 +1,13 @@
 /*jslint evil:true */
 var base = require('org.startpad.base');
 var format = require('org.startpad.format');
+var string = require('org.startpad.string').patch();
+var ut = require('com.jquery.qunit');
 
 exports.extend({
     'namespaceDoc': namespaceDoc,
-    'updateScriptSections': updateScriptSections
+    'updateScriptSections': updateScriptSections,
+    'updateChallenges': updateChallenges
 });
 
 var reArgs = /^function\s+\S*\(([^\)]*)\)/;
@@ -84,27 +87,9 @@ function updateScriptSections(context) {
     var e;
     var printed;
 
-    // Improved version for format module
-    // Takes a dictionary or any number of positional arguments.
-    // {n} - positional arg
-    // {key} - dictionary arg (first match)
-    function replaceKeys(st) {
-        var args = arguments;
-        st = st.toString();
-        var re = /\{([^}]+)\}/g;
-        st = st.replace(re, function(whole, key) {
-            var n = parseInt(key);
-            if (!isNaN(n)) {
-                return args[n];
-            } else {
-                return args[1][key];
-            }
-        });
-        return st;
-    }
-
-    function print() {
-        var s = replaceKeys.apply(undefined, arguments);
+    function write() {
+        var args = Array.prototype.slice.call(arguments, 1);
+        var s = string.format(arguments[0], args);
         while (s.length > 80) {
             printed.push(s.slice(0, 80));
             s = s.slice(80);
@@ -174,4 +159,42 @@ function updateScriptSections(context) {
                             '</code></pre>');
         }
     }
+}
+
+function updateChallenges(context) {
+    var challenges = $('challenge', context);
+    var printed;
+
+    for (var i = 0; i < challenges.length; i++) {
+        var challenge = challenges[i];
+        var prefix = $('prefix', challenge).text();
+        var code = $('code', challenge).text();
+        var testCode = $('test', challenge).text();
+        var suffix = $('prefix', challenge).text();
+        $(challenge).html('<textarea>' + format.escapeHTML(code) + '</textarea>');
+        var nsChallenge = makeNamespace(code,
+                                        prefix,
+                                        suffix);
+        namespace.challenge = nsChallenge;
+        var nsTest = makeNamespace(testCode,
+                                   "var ut = require('com.jquery.qunit');" +
+                                   "var challenge = require('challenge');" +
+                                   "exports.testFunction = function testFunction() {",
+                                   "}");
+        nsTest.challenge = nsChallenge;
+        try {
+            ut.test("Challenge Tests", nsTest.testFunction);
+        } catch (e) {
+        }
+    }
+}
+
+function makeNamespace(code, prefix, suffix) {
+    prefix = prefix || '';
+    suffix = suffix || '';
+
+    var ns = {};
+    var closure = new Function('exports', 'require', prefix + code + suffix);
+    closure(ns, require);
+    return ns;
 }

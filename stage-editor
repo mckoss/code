@@ -7,6 +7,7 @@
 <link rel="apple-touch-icon" href="/images/touch.png" />
 
 <link rel="stylesheet" type="text/css" href="/styles/editor.css" />
+<link rel="stylesheet" type="text/css" href="/styles/qunit.css" />
 <link rel="stylesheet" type="text/css" href="/lib/beta/css/client.css" />
 
 <script type="text/javascript" src="/lib/beta/js/pf-client.js"></script>
@@ -33,6 +34,12 @@
 
     <div id="outputBlock">
       <div id="output"></div>
+
+      <h2 id="qunit-banner"></h2>
+      <div id="qunit-testrunner-toolbar"></div>
+      <h2 id="qunit-userAgent"></h2>
+      <ol id="qunit-tests"></ol>
+
     </div>
 
     <div id="footer">

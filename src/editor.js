@@ -28,6 +28,7 @@ function onEditChange() {
     try {
         doc.output.innerHTML = markdown.makeHtml(newText);
         nsdoc.updateScriptSections(doc.output);
+        nsdoc.updateChallenges(doc.output);
     } catch (e) {
         $(doc.output).text("Error: " + e.message);
     }
