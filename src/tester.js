@@ -1,6 +1,7 @@
 /*jslint evil:true */
 var types = require('org.startpad.types');
 var ut = require('com.jquery.qunit');
+require('org.startpad.string').patch();
 
 var testInfo;
 

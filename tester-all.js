@@ -1814,6 +1814,7 @@ namespace.module('com.pageforest.code.tester', function (exports, require) {
 /*jslint evil:true */
 var types = require('org.startpad.types');
 var ut = require('com.jquery.qunit');
+require('org.startpad.string').patch();
 
 var testInfo;
 
