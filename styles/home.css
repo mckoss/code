@@ -1,0 +1,73 @@
+body{    
+    background: url(matrix.jpg);
+	width:900px;
+	margin: auto;
+}
+
+div.titlebar {
+	font-size:72px;
+	font-family:sans-serif;
+	font-weight:200;
+	background-color:#000000;
+	color:#00FF00;
+	padding-left:5px;
+}
+div.mid {
+	height:300px;
+	width:100%;
+	background-color:#000000;
+}
+div.why {
+	font-family:sans-serif;
+	font-size:24px;
+	width:300px;
+	float:left;
+	margin-top:50px;
+	margin-left:15px;
+	padding-left:15px;
+	padding-top:10px;
+	padding-bottom:33px;
+	background-color:#55FF55;
+	border-radius:10px;
+}
+
+div.bigl2p {
+	font-family:sans-serif;
+	font-size:256px;
+	float:left;
+	margin-left:30px;
+	padding-left:25px;
+	margin-top:50px;
+	width:500px;
+	background-color:#FFFFFF;
+	background-color:#55FF55;
+	border-radius:10px;
+}
+
+div.howtitle {
+	font-family:sans-serif;
+	font-size:32px;
+	background-color:#000000;
+	color:#00FF00;
+	padding:15px;
+}
+div.how {
+	font-family:sans-serif;
+	font-size:24px;
+	font-weight:0;
+
+
+}
+input.button {
+	height:50px;
+	width:120px;
+	margin-left:80px;
+	margin-top:25px;
+	background-color:#000000;
+	color:#00FF00;
+	border-radius:10px;
+	font-size:20px;
+}
+input.button:hover {
+	background-color:#002200;
+}

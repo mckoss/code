@@ -1,50 +1,47 @@
 <!DOCTYPE html>
-<html manifest="/app.manifest-disable">
+<html manifest="/app.manifest">
 <head>
-<title>Code Playground</title>
-
-<link rel="icon" type="image/png" href="/images/icon.png" />
-<link rel="apple-touch-icon" href="/images/touch.png" />
-
-<link rel="stylesheet" type="text/css" href="/styles/main.css" />
-<link rel="stylesheet" type="text/css" href="/lib/beta/css/client.css" />
-
+<link rel="stylesheet" type="text/css" href="styles/home.css" />
+<script>
+function tryIt() {
+  window.location.href = '/lesson#challenge-toc';
+}
+</script>
 </head>
 
 <body>
-  <div id="page">
-    <h1 id="page-heading">
-      <span id="title">Code Playground</span>
-    </h1>
+  <div class="wholepage">
+    <div class="titlebar">
+      L E A R N 2 P R O G R A M
+    </div>
 
-    <p>
-    Welcome to the Code Playground.  You can use this site to create staged environments
-    for your users to experiment with JavaScript API's or language features.
-    </p>
+    <div class="mid">
+      <div class="why">
+        Learning a programming language can be <b>confusing</b>, <b>frustrating</b>, and <b>tedious</b>. <br>
+        We make it <b>clear</b>, <b>easy</b>, and <b>fun</b>. <br>
+        <input class="button" type="button" value="Try It Now!" onclick='tryIt();'>
+      </div>
 
-    <ul>
-        <li><a href="/stage">Try it</a></li>
-    </ul>
+      <div class="bigl2p">
+        L2P
+      </div>
 
-    <div id="footer">
-      <hr/>
-      <a target="_blank" href="https://github.com/mckoss/code">Source Code</a> |
-      <a href="http://www.pageforest.com">Pageforest.com</a>
-    </div> <!-- footer -->
+    </div>
 
-  </div> <!-- page -->
+    <div class="howtitle">
+      <b>How do we do this?</b>
+      <div class="how">
+        <ul>
+          <li><b>Completely In-Browser:</b>  You want to learn to program- not how to use IDE's, install and compile a handful of programs, host applications, etc.
+          <li><b>Instant Feedback:</b>  You don't have to figure out whether you are doing it right, we will tell you.
+          <li><b>Cheaper than a class, more fun than a book</b>
+          <li><b>Guided self-direction:</b> challenge yourself realistically with problems we know you can solve
+          <li><b>Go at your own pace:</b> as fast or slow as you want.
+          <li><b>Become the architect of your own digital universe</b>
+          <li><b>Free to try!</b> </ul>
+      </div>
+    </div>
+  </div>
 
-  <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-2072869-7']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') +
-    '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
 </body>
 </html>
