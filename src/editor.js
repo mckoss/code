@@ -7,6 +7,8 @@ exports.extend({
     'onReady': onReady,
     'getDoc': getDoc,
     'setDoc': setDoc,
+    'onUserChange': onUserChange,
+    'onError': onError,
     'onSaveSuccess': onSaveSuccess
 });
 
@@ -17,6 +19,7 @@ var lastText = "";
 var syncTime = 5;
 var editVisible = false;
 var editorInitialized = false;
+var hasUserDoc = false;
 
 function onEditChange() {
     var newText = doc.editor.value;
@@ -90,6 +93,10 @@ function getDoc() {
     };
 }
 
+function onUserChange() {
+    initUserData();
+}
+
 // For offline - capable applications
 function handleAppCache() {
     if (typeof applicationCache == 'undefined') {
@@ -103,4 +110,31 @@ function handleAppCache() {
     }
 
     applicationCache.addEventListener('updateready', handleAppCache, false);
+}
+
+function initUserData() {
+    if (!client.username) {
+        alert("Sign In to save your code.");
+        return;
+    }
+
+    client.storage.getDoc('user_' + client.username, {
+        error: function () {
+            console.log("Creating user doc.");
+            client.storage.putDoc('user_' + client.username,
+                                  {blob: {version: 1},
+                                   title: client.username + " challenge data.",
+                                   readers: ['public']
+                                  }, undefined, function () {
+                                      hasUserDoc = true;
+                                  });
+        }
+    }, function(data) {
+        console.log(data);
+        hasUserDoc = true;
+    });
+}
+
+function onError(status, message) {
+    return true;
 }

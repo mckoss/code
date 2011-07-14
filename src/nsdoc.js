@@ -15,6 +15,8 @@ var reArgs = /^function\s+\S*\(([^\)]*)\)/;
 var reFuncName = /function\s+(\S+)\s*\(/;
 var reComma = /\s*,\s/;
 
+var WRITE_LIMIT = 1000;
+
 function functionDoc(name, func) {
     var s = new base.StBuf();
     var level = name.split('.').length;
@@ -182,15 +184,25 @@ function updateChallenges(context) {
         $('#print_' + i).addClass('unused');
         $('code', '#print_' + i).empty();
         test.sep = '';
+        test.writes = 0;
         if (hangTimer) {
             clearTimeout(hangTimer);
             hangTimer = undefined;
         }
 
+        function terminateTest() {
+            clearTimeout(hangTimer);
+            hangTimer = undefined;
+            tester.terminate();
+            tester = undefined;
+        }
+
         try {
             if (tester) {
+                console.log("Killing worker...");
                 tester.terminate();
             }
+            $('#test_' + i).append('<div class="test-status">Starting...</div>');
             tester = new Worker('tester-all.js');
             tester.postMessage({challenge: i,
                                 code: test.prefix + code + test.suffix,
@@ -210,13 +222,12 @@ function updateChallenges(context) {
                 var $results = $('#test_' + data.challenge);
                 switch (data.type) {
                 case 'start':
-                    $results.append('<div class="test-status">Starting...</div>');
+                    $results.empty().append('<div class="test-status">Starting...started.</div>');
                     break;
                 case 'error':
                     $results.append('<div class="test-status FAIL">Code error: {0}</div>'
                                     .format(data.info.message));
-                    clearTimeout(hangTimer);
-                    hangTimer = undefined;
+                    terminateTest();
                     break;
                 case 'done':
                     $results.append(('<div class="test-status {0}">Test Complete: ' +
@@ -225,14 +236,20 @@ function updateChallenges(context) {
                                         data.info.failed > 0 ? 'FAIL' : 'PASS',
                                         data.info.passed,
                                         data.info.total));
-                    clearTimeout(hangTimer);
-                    hangTimer = undefined;
+                    terminateTest();
                     break;
                 case 'test':
                     $results.append('<div class="test {0}">{0}: {1}<div>'
                                     .format(data.info.result ? 'PASS' : 'FAIL', data.info.message));
                     break;
                 case 'write':
+                    if (++test.writes > WRITE_LIMIT) {
+                        $('code', '#print_' + i).append(test.sep + "Write Limit Exceeded.");
+                        $results.append('<div class="test FAIL">ABORTED: ' +
+                                        'Write Limit Exceeeded.<div>');
+                        terminateTest();
+                        return;
+                    }
                     $('#print_' + i).removeClass('unused');
                     $('code', '#print_' + i).append(test.sep + format.escapeHTML(data.message));
                     test.sep = '\n';

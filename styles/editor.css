@@ -49,6 +49,8 @@ span.menu-bar {
 #output pre.printed {
   color: white;
   background-color: black;
+  max-height: 250px;
+  overflow: auto;
 }
 
 #output table {

@@ -3117,6 +3117,8 @@ exports.extend({
     'onReady': onReady,
     'getDoc': getDoc,
     'setDoc': setDoc,
+    'onUserChange': onUserChange,
+    'onError': onError,
     'onSaveSuccess': onSaveSuccess
 });
 
@@ -3127,6 +3129,7 @@ var lastText = "";
 var syncTime = 5;
 var editVisible = false;
 var editorInitialized = false;
+var hasUserDoc = false;
 
 function onEditChange() {
     var newText = doc.editor.value;
@@ -3200,6 +3203,10 @@ function getDoc() {
     };
 }
 
+function onUserChange() {
+    initUserData();
+}
+
 // For offline - capable applications
 function handleAppCache() {
     if (typeof applicationCache == 'undefined') {
@@ -3213,6 +3220,33 @@ function handleAppCache() {
     }
 
     applicationCache.addEventListener('updateready', handleAppCache, false);
+}
+
+function initUserData() {
+    if (!client.username) {
+        alert("Sign In to save your code.");
+        return;
+    }
+
+    client.storage.getDoc('user_' + client.username, {
+        error: function () {
+            console.log("Creating user doc.");
+            client.storage.putDoc('user_' + client.username,
+                                  {blob: {version: 1},
+                                   title: client.username + " challenge data.",
+                                   readers: ['public']
+                                  }, undefined, function () {
+                                      hasUserDoc = true;
+                                  });
+        }
+    }, function(data) {
+        console.log(data);
+        hasUserDoc = true;
+    });
+}
+
+function onError(status, message) {
+    return true;
 }
 });
 
@@ -3234,6 +3268,8 @@ exports.extend({
 var reArgs = /^function\s+\S*\(([^\)]*)\)/;
 var reFuncName = /function\s+(\S+)\s*\(/;
 var reComma = /\s*,\s/;
+
+var WRITE_LIMIT = 1000;
 
 function functionDoc(name, func) {
     var s = new base.StBuf();
@@ -3402,15 +3438,25 @@ function updateChallenges(context) {
         $('#print_' + i).addClass('unused');
         $('code', '#print_' + i).empty();
         test.sep = '';
+        test.writes = 0;
         if (hangTimer) {
             clearTimeout(hangTimer);
             hangTimer = undefined;
         }
 
+        function terminateTest() {
+            clearTimeout(hangTimer);
+            hangTimer = undefined;
+            tester.terminate();
+            tester = undefined;
+        }
+
         try {
             if (tester) {
+                console.log("Killing worker...");
                 tester.terminate();
             }
+            $('#test_' + i).append('<div class="test-status">Starting...</div>');
             tester = new Worker('tester-all.js');
             tester.postMessage({challenge: i,
                                 code: test.prefix + code + test.suffix,
@@ -3430,13 +3476,12 @@ function updateChallenges(context) {
                 var $results = $('#test_' + data.challenge);
                 switch (data.type) {
                 case 'start':
-                    $results.append('<div class="test-status">Starting...</div>');
+                    $results.empty().append('<div class="test-status">Starting...started.</div>');
                     break;
                 case 'error':
                     $results.append('<div class="test-status FAIL">Code error: {0}</div>'
                                     .format(data.info.message));
-                    clearTimeout(hangTimer);
-                    hangTimer = undefined;
+                    terminateTest();
                     break;
                 case 'done':
                     $results.append(('<div class="test-status {0}">Test Complete: ' +
@@ -3445,14 +3490,20 @@ function updateChallenges(context) {
                                         data.info.failed > 0 ? 'FAIL' : 'PASS',
                                         data.info.passed,
                                         data.info.total));
-                    clearTimeout(hangTimer);
-                    hangTimer = undefined;
+                    terminateTest();
                     break;
                 case 'test':
                     $results.append('<div class="test {0}">{0}: {1}<div>'
                                     .format(data.info.result ? 'PASS' : 'FAIL', data.info.message));
                     break;
                 case 'write':
+                    if (++test.writes > WRITE_LIMIT) {
+                        $('code', '#print_' + i).append(test.sep + "Write Limit Exceeded.");
+                        $results.append('<div class="test FAIL">ABORTED: ' +
+                                        'Write Limit Exceeeded.<div>');
+                        terminateTest();
+                        return;
+                    }
                     $('#print_' + i).removeClass('unused');
                     $('code', '#print_' + i).append(test.sep + format.escapeHTML(data.message));
                     test.sep = '\n';
