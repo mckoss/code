@@ -172,7 +172,12 @@ function updateChallenges(context) {
 
     function onChallengeChange(i) {
         var test = tests[i];
-        var code = test.textarea.value;
+        var code = trimCode(test.textarea.value);
+        if (code == test.codeLast) {
+            return;
+        }
+        test.codeLast = code;
+
         $('#test_' + i).empty();
         $('#print_' + i).addClass('unused');
         $('code', '#print_' + i).empty();
