@@ -174,6 +174,9 @@ function updateChallenges(context) {
         var test = tests[i];
         var code = test.textarea.value;
         $('#test_' + i).empty();
+        $('#print_' + i).addClass('unused');
+        $('code', '#print_' + i).empty();
+        test.sep = '';
         if (hangTimer) {
             clearTimeout(hangTimer);
             hangTimer = undefined;
@@ -190,7 +193,8 @@ function updateChallenges(context) {
             hangTimer = setTimeout(function () {
                 var $results = $('#test_' + i);
                 $results.append('<div class="test-status">You may have an ' +
-                                '<a target="_blank" href="http://en.wikipedia.org/wiki/Infinite_loop">' +
+                                '<a target="_blank" ' +
+                                'href="http://en.wikipedia.org/wiki/Infinite_loop">' +
                                 'infinite loop</a>...' +
                                 '</div>');
             }, 10000);
@@ -223,11 +227,15 @@ function updateChallenges(context) {
                     $results.append('<div class="test {0}">{0}: {1}<div>'
                                     .format(data.info.result ? 'PASS' : 'FAIL', data.info.message));
                     break;
+                case 'write':
+                    $('#print_' + i).removeClass('unused');
+                    $('code', '#print_' + i).append(test.sep + format.escapeHTML(data.message));
+                    test.sep = '\n';
+                    break;
                 }
             };
         } catch (e) {
-            var $results = $('#test_' + i);
-            $results.append('<div class="test FAIL">{0}<div>'.format(e.toString()));
+            $('#test_' + i).append('<div class="test FAIL">{0}<div>'.format(e.toString()));
         }
     }
 
@@ -236,7 +244,8 @@ function updateChallenges(context) {
         tests[i] = {
             prefix: $('prefix', challenge).text(),
             suffix: $('suffix', challenge).text(),
-            testCode: $('test', challenge).text()
+            testCode: $('test', challenge).text(),
+            sep: ''
         };
         var code = $('code', challenge).text();
         $(challenge).html('<textarea></textarea>');
@@ -245,6 +254,8 @@ function updateChallenges(context) {
             .val(trimCode(code))
             .bind('keyup', onChallengeChange.curry(i))
             .autoResize({limit: 1000});
+        $(challenge).after('<pre id="print_{0}" class="printed unused"><code></code></pre>'
+                           .format(i));
         $(challenge).after('<pre class="test-results" id="test_{0}"></pre>'.format(i));
 
         onChallengeChange(i);

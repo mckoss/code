@@ -1842,15 +1842,19 @@ function onMessage(event) {
     var nsCode = {},
         nsTest = {};
 
+    function writeFunction(s) {
+        postMessage({challenge: data.challenge, type: 'write', message: s.toString()});
+    }
+
     try {
-        var closure = new Function('exports', 'require', data.code);
-        closure(nsCode, require);
-        var testClosure = new Function('exports', 'require', 'challenge',
+        var closure = new Function('exports', 'require', 'write', data.code);
+        closure(nsCode, require, writeFunction);
+        var testClosure = new Function('exports', 'require', 'challenge', 'write',
                                        "var ut = require('com.jquery.qunit');" +
                                        "exports.testFunction = function testFunction() {" +
                                        data.test +
                                        "};");
-        testClosure(nsTest, require, nsCode);
+        testClosure(nsTest, require, nsCode, writeFunction);
         ut.QUnit.init();
         ut.test(data.challenge, nsTest.testFunction);
         ut.QUnit.start();
