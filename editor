@@ -14,7 +14,7 @@
 <script type="text/javascript" src="/editor-all.js"></script>
 
 <script type="text/javascript">
-  $(document).ready(namespace.com.pageforest.code.editor.onReady);
+  $(document).ready(namespace.com.pageforest.code.editor.onEditorReady);
 </script>
 
 </head>

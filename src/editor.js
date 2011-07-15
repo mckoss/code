@@ -4,12 +4,8 @@ var nsdoc = require('org.startpad.nsdoc');
 var markdown = new Showdown.converter();
 
 exports.extend({
-    'onReady': onReady,
-    'getDoc': getDoc,
-    'setDoc': setDoc,
-    'onUserChange': onUserChange,
-    'onError': onError,
-    'onSaveSuccess': onSaveSuccess
+    'onEditorReady': onEditorReady,
+    'onLessonReady': onLessonReady
 });
 
 var client;
@@ -19,7 +15,67 @@ var lastText = "";
 var syncTime = 5;
 var editVisible = false;
 var editorInitialized = false;
-var hasUserDoc = false;
+
+var editorApp = {
+    onSaveSuccess: function (json) {
+        updateMeta(client.meta);
+    },
+
+    setDoc: function (json) {
+        doc.editor.value = json.blob.markdown;
+        onEditChange();
+        updateMeta(json);
+    },
+
+    getDoc: function() {
+        return {
+            blob: {
+                version: 1,
+                markdown: doc.editor.value
+            },
+            readers: ['public']
+        };
+    },
+
+    onUserChange: function() {
+        initUserData();
+    },
+
+    onError: function(status, message) {
+        return true;
+    }
+};
+
+var lessonApp = {
+    getDoc: function() {
+        return {
+            blob: {version: 1},
+            title: client.username + " challenge data.",
+            readers: ['public']
+        };
+    },
+
+    setDoc: function (json) {
+    }
+};
+
+function onEditorReady() {
+    handleAppCache();
+    doc = dom.bindIDs();
+    client = new clientLib.Client(editorApp, {saveInterval: 0});
+    client.addAppBar();
+
+    $(doc.edit).click(toggleEditor);
+
+    setInterval(onEditChange, syncTime * 1000);
+}
+
+function onLessonReady() {
+    handleAppCache();
+    doc = dom.bindIDs();
+    client = new clientLib.Client(lessonApp, {oneDocPerUser: true});
+    client.addAppBar();
+}
 
 function onEditChange() {
     var newText = doc.editor.value;
@@ -55,46 +111,9 @@ function toggleEditor(evt) {
     $(doc.edit).val(editVisible ? 'hide' : 'edit');
 }
 
-function onReady() {
-    handleAppCache();
-    doc = dom.bindIDs();
-    client = new clientLib.Client(exports);
-    client.saveInterval = 0;
-
-    client.addAppBar();
-
-    $(doc.edit).click(toggleEditor);
-
-    setInterval(onEditChange, syncTime * 1000);
-}
-
 function updateMeta(json) {
     document.title = json.title;
     $('#title').text(json.title);
-}
-
-function onSaveSuccess(json) {
-    updateMeta(client.meta);
-}
-
-function setDoc(json) {
-    doc.editor.value = json.blob.markdown;
-    onEditChange();
-    updateMeta(json);
-}
-
-function getDoc() {
-    return {
-        blob: {
-            version: 1,
-            markdown: doc.editor.value
-        },
-        readers: ['public']
-    };
-}
-
-function onUserChange() {
-    initUserData();
 }
 
 // For offline - capable applications
@@ -117,24 +136,4 @@ function initUserData() {
         alert("Sign In to save your code.");
         return;
     }
-
-    client.storage.getDoc('user_' + client.username, {
-        error: function () {
-            console.log("Creating user doc.");
-            client.storage.putDoc('user_' + client.username,
-                                  {blob: {version: 1},
-                                   title: client.username + " challenge data.",
-                                   readers: ['public']
-                                  }, undefined, function () {
-                                      hasUserDoc = true;
-                                  });
-        }
-    }, function(data) {
-        console.log(data);
-        hasUserDoc = true;
-    });
-}
-
-function onError(status, message) {
-    return true;
 }

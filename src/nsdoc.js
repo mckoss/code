@@ -199,10 +199,9 @@ function updateChallenges(context) {
 
         try {
             if (tester) {
-                console.log("Killing worker...");
                 tester.terminate();
             }
-            $('#test_' + i).append('<div class="test-status">Starting...</div>');
+            $('#test_' + i).append('<div class="test-status">Loading code.</div>');
             tester = new Worker('tester-all.js');
             tester.postMessage({challenge: i,
                                 code: test.prefix + code + test.suffix,
@@ -222,7 +221,7 @@ function updateChallenges(context) {
                 var $results = $('#test_' + data.challenge);
                 switch (data.type) {
                 case 'start':
-                    $results.empty().append('<div class="test-status">Starting...started.</div>');
+                    $results.append('<div class="test-status">Running tests.</div>');
                     break;
                 case 'error':
                     $results.append('<div class="test-status FAIL">Code error: {0}</div>'
