@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html manifest="/app.manifest-disabled">
 <head>
-<title>Code Lessons Editor</title>
+<title>Code Lesson</title>
 
 <link rel="icon" type="image/png" href="/images/icon.png" />
 <link rel="apple-touch-icon" href="/images/touch.png" />

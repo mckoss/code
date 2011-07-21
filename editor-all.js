@@ -3157,15 +3157,66 @@ var editorApp = {
 };
 
 var lessonApp = {
+    getDocid: function () {
+        if (!client || !client.username) {
+            return undefined;
+        }
+
+        this.lessonId = window.location.hash.substr(1);
+        if (this.lessonId == '') {
+            return undefined;
+        }
+
+        return client.username + '/' + this.lessonId;
+    },
+
+    setDocid: function (docid) {
+    },
+
     getDoc: function() {
-        return {
-            blob: {version: 1},
-            title: client.username + " challenge data.",
-            readers: ['public']
-        };
+        var json = {blob: {
+            version: 1,
+            lessonId: this.lessonId,
+            challenges: []
+        }};
+        var challenges = $('div.challenge', doc.output);
+        for (var i = 0; i < challenges.length; i++) {
+            json.blob.challenges[i] = $('textarea', challenges[i]).text();
+        }
+        return json;
     },
 
     setDoc: function (json) {
+        console.log("setDoc");
+        this.updateChallenges(json);
+    },
+
+    updateChallenges: function (json) {
+        if (!json || !this.lessonLoaded || json.blob.lessonId != this.lessonLoaded) {
+            this.savedUserData = json;
+            return;
+        }
+        this.savedUserData = undefined;
+        var challenges = $('div.challenge', doc.output);
+        for (var i = 0; i < challenges.length; i++) {
+            $('textarea', challenges[i]).text(json.blob.challenges[i]);
+        }
+    },
+
+    onStateChange: function(newState) {
+        var self = this;
+        if (newState != 'loading') {
+            return;
+        }
+        client.storage.getDoc(this.lessonId, undefined, function (json) {
+            console.log("loaded lesson");
+            editorApp.setDoc(json);
+            self.lessonLoaded = this.lessonId;
+            self.updateChallenges(self.savedUserData);
+        });
+    },
+
+    onUserChange: function (username) {
     }
 };
 
@@ -3183,7 +3234,7 @@ function onEditorReady() {
 function onLessonReady() {
     handleAppCache();
     doc = dom.bindIDs();
-    client = new clientLib.Client(lessonApp, {oneDocPerUser: true});
+    client = new clientLib.Client(lessonApp);
     client.addAppBar();
 }
 
