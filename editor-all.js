@@ -3250,6 +3250,7 @@ function onEditChange() {
         nsdoc.updateScriptSections(doc.output);
         nsdoc.updateChallenges(doc.output);
     } catch (e) {
+        console.log("Render error: " + e.message);
         $(doc.output).text("Render error: " + e.message);
     }
 }
@@ -3394,6 +3395,7 @@ function updateScriptSections(context) {
     var e;
     var printed;
 
+    console.log("updateScriptSections");
     function write() {
         var args = Array.prototype.slice.call(arguments, 1);
         var s = string.format(arguments[0], args);
@@ -3406,6 +3408,9 @@ function updateScriptSections(context) {
 
     for (var i = 0; i < scripts.length; i++) {
         var script = scripts[i];
+        if (script.className != '') {
+            continue;
+        }
         printed = [];
         var body = base.strip(script.innerHTML);
         var lines = body.split('\n');
@@ -3472,13 +3477,15 @@ var tester;
 var hangTimer;
 
 function updateChallenges(context) {
-    var challenges = $('div.challenge', context);
+    var challenges = $('script.challenge', context);
     var tests = [];
     var printed;
 
+    console.log("updateChallenges");
+
     function onChallengeChange(i) {
         var test = tests[i];
-        var code = trimCode(test.textarea.value);
+        var code = test.textarea.value;
         if (code == test.codeLast) {
             return;
         }
@@ -3566,17 +3573,22 @@ function updateChallenges(context) {
 
     for (var i = 0; i < challenges.length; i++) {
         var challenge = challenges[i];
+        // Psuedo-XML (CDATA parsing not working)
+        var xml = $(challenge).text();
         tests[i] = {
-            prefix: $('prefix', challenge).text(),
-            suffix: $('suffix', challenge).text(),
-            testCode: $('test', challenge).text(),
+            prefix: getXMLText('prefix', xml),
+            suffix: getXMLText('suffix', xml),
+            testCode: getXMLText('test', xml),
             sep: ''
         };
-        var code = $('code', challenge).text();
-        $(challenge).html('<textarea></textarea>');
+        var code = getXMLText('code', xml);
+        $(challenge).after('<div id="challenge_{0}" class="challenge"><textarea></textarea></div>'
+                           .format(i));
+        $(challenge).remove();
+        challenge = $('#challenge_' + i, context)[0];
         var textarea = tests[i].textarea = $('textarea', challenge)[0];
         $(textarea)
-            .val(trimCode(code))
+            .val(code)
             .bind('keyup', onChallengeChange.curry(i))
             .autoResize({limit: 1000});
         $(challenge).after('<pre id="print_{0}" class="printed unused"><code></code></pre>'
@@ -3585,6 +3597,15 @@ function updateChallenges(context) {
 
         onChallengeChange(i);
     }
+}
+
+function getXMLText(tag, s) {
+    var start = s.indexOf('<{0}>'.format(tag));
+    var end = s.indexOf('</{0}>'.format(tag));
+    if (start == -1 || end == -1) {
+        return '';
+    }
+    return trimCode(s.slice(start + tag.length + 2, end));
 }
 
 function trimCode(s) {

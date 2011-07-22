@@ -140,6 +140,7 @@ function onEditChange() {
         nsdoc.updateScriptSections(doc.output);
         nsdoc.updateChallenges(doc.output);
     } catch (e) {
+        console.log("Render error: " + e.message);
         $(doc.output).text("Render error: " + e.message);
     }
 }
