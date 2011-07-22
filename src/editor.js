@@ -48,25 +48,37 @@ var editorApp = {
 
 var lessonApp = {
     getDocid: function () {
-        if (!client || !client.username) {
-            return undefined;
-        }
-
+        // Only return a docid when all conditions are conducive to
+        // saving a user blob for the lesson.
         this.lessonId = window.location.hash.substr(1);
-        if (this.lessonId == '') {
+        if (this.lessonId != '' && this.lessonLoading != this.lessonId) {
+            this.loadLesson();
+        }
+
+        if (!this.hasUserDoc || !this.lessonLoaded || this.lessonId != this.lessonLoaded) {
             return undefined;
         }
 
-        return client.username + '/' + this.lessonId;
+        return client.username + '/' + this.lessonLoaded;
     },
 
     setDocid: function (docid) {
     },
 
+    loadLesson: function () {
+        var self = this;
+        this.lessonLoading = this.lessonId;
+        client.storage.getDoc(this.lessonLoading, undefined, function (json) {
+            console.log("loaded lesson: " + self.lessonLoading);
+            self.lessonLoaded = self.lessonLoading;
+            editorApp.setDoc(json);
+        });
+    },
+
     getDoc: function() {
         var json = {blob: {
             version: 1,
-            lessonId: this.lessonId,
+            lessonId: this.lessonLoaded,
             challenges: []
         }};
         var challenges = $('div.challenge', doc.output);
@@ -82,31 +94,24 @@ var lessonApp = {
     },
 
     updateChallenges: function (json) {
-        if (!json || !this.lessonLoaded || json.blob.lessonId != this.lessonLoaded) {
-            this.savedUserData = json;
-            return;
-        }
-        this.savedUserData = undefined;
         var challenges = $('div.challenge', doc.output);
         for (var i = 0; i < challenges.length; i++) {
             $('textarea', challenges[i]).text(json.blob.challenges[i]);
         }
     },
 
-    onStateChange: function(newState) {
-        var self = this;
-        if (newState != 'loading') {
-            return;
-        }
-        client.storage.getDoc(this.lessonId, undefined, function (json) {
-            console.log("loaded lesson");
-            editorApp.setDoc(json);
-            self.lessonLoaded = this.lessonId;
-            self.updateChallenges(self.savedUserData);
-        });
-    },
-
     onUserChange: function (username) {
+        var self = this;
+        this.hasUserDoc = false;
+        if (username) {
+            client.storage.putDoc(username,
+                                  {title: 'Code Challenges for ' + username,
+                                   blob: {
+                                       version: 1
+                                   }}, undefined, function () {
+                self.hasUserDoc = true;
+            });
+        }
     }
 };
 
