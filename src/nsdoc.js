@@ -277,18 +277,17 @@ function updateChallenges(context) {
             sep: ''
         };
         var code = getXMLText('code', xml);
-        $(challenge).after('<div id="challenge_{0}" class="challenge"><textarea></textarea></div>'
+        $(challenge).after('<textarea id="challenge_{0}" class="challenge"></textarea>'
                            .format(i));
         $(challenge).remove();
-        challenge = $('#challenge_' + i, context)[0];
-        var textarea = tests[i].textarea = $('textarea', challenge)[0];
+        var textarea = tests[i].textarea = $('#challenge_' + i)[0];
         $(textarea)
             .val(code)
             .bind('keyup', onChallengeChange.curry(i))
             .autoResize({limit: 1000});
-        $(challenge).after('<pre id="print_{0}" class="printed unused"><code></code></pre>'
+        $(textarea).after('<pre id="print_{0}" class="printed unused"><code></code></pre>'
                            .format(i));
-        $(challenge).after('<pre class="test-results" id="test_{0}"></pre>'.format(i));
+        $(textarea).after('<pre class="test-results" id="test_{0}"></pre>'.format(i));
 
         onChallengeChange(i);
     }

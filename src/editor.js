@@ -81,9 +81,10 @@ var lessonApp = {
             lessonId: this.lessonLoaded,
             challenges: []
         }};
-        var challenges = $('div.challenge', doc.output);
+        var challenges = $('textarea.challenge', doc.output);
         for (var i = 0; i < challenges.length; i++) {
-            json.blob.challenges[i] = $('textarea', challenges[i]).text();
+            // Beware phantom text areas
+            json.blob.challenges[i] = $('#challenge_' + i).val();
         }
         return json;
     },
@@ -94,9 +95,10 @@ var lessonApp = {
     },
 
     updateChallenges: function (json) {
-        var challenges = $('div.challenge', doc.output);
+        var challenges = $('textarea.challenge', doc.output);
         for (var i = 0; i < challenges.length; i++) {
-            $('textarea', challenges[i]).text(json.blob.challenges[i]);
+            // Beware phantom textareas!
+            $('#challenge_' + i).val(json.blob.challenges[i]);
         }
     },
 
