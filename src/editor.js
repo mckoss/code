@@ -71,11 +71,14 @@ var lessonApp = {
         client.storage.getDoc(this.lessonLoading, undefined, function (json) {
             console.log("loaded lesson: " + self.lessonLoading);
             self.lessonLoaded = self.lessonLoading;
-            editorApp.setDoc(json);
+            renderMarkdown(json.blob.markdown);
         });
     },
 
     getDoc: function() {
+        if (!this.lessonLoaded) {
+            return {blob: {}};
+        }
         var json = {blob: {
             version: 1,
             lessonId: this.lessonLoaded,
@@ -142,6 +145,10 @@ function onEditChange() {
     }
     client.setDirty();
     lastText = newText;
+    renderMarkdown(newText);
+}
+
+function renderMarkdown(newText) {
     try {
         doc.output.innerHTML = markdown.makeHtml(newText);
         nsdoc.updateScriptSections(doc.output);
@@ -149,7 +156,7 @@ function onEditChange() {
     } catch (e) {
         console.log("Render error: " + e.message);
         $(doc.output).text("Render error: " + e.message);
-    }
+    }    
 }
 
 function toggleEditor(evt) {
