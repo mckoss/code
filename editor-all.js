@@ -3283,6 +3283,7 @@ function renderMarkdown(newText) {
         nsdoc.updateChallenges(doc.output);
     } catch (e) {
         $(doc.output).text("Render error: " + e.message);
+        console.log("Render error: " + e.message + '\n' + e.stack);
     }
 }
 
@@ -3416,9 +3417,6 @@ function namespaceDoc(ns) {
    Update embedded <script> sections and insert markdown-formatted
    blocks to display them.
 
-   <script class="eval-lines"> can be used to eval each line and
-   append a comment with the returned value.
-
    REVIEW: Injecting script into DOM executes on Firefox?  Need to disable.
 */
 function updateScriptSections(context) {
@@ -3457,7 +3455,8 @@ function updateScriptSections(context) {
             var batch = lines.slice(jBegin, j + 1).join('\n');
             batch = base.strip(batch);
             try {
-                var value = eval(batch);
+                console.log("eval: '" + batch + "'");
+                var value = evalExpression(batch, write);
                 if (value == undefined) {
                     comments[j] = '';
                 } else {
@@ -3650,6 +3649,10 @@ function trimCode(s) {
         s = lines.join('\n');
     }
     return s + '\n';
+}
+
+function evalExpression(code, write) {
+    return eval(code);
 }
 });
 

@@ -173,6 +173,7 @@ function renderMarkdown(newText) {
         nsdoc.updateChallenges(doc.output);
     } catch (e) {
         $(doc.output).text("Render error: " + e.message);
+        console.log("Render error: " + e.message + '\n' + e.stack);
     }
 }
 
