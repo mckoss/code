@@ -313,5 +313,5 @@ function trimCode(s) {
         }
         s = lines.join('\n');
     }
-    return s;
+    return s + '\n';
 }

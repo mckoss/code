@@ -3120,7 +3120,6 @@ exports.extend({
 
 var client;
 var doc;                            // Bound elements here
-var blob;
 var lastText = "";
 var syncTime = 5;
 var editVisible = false;
@@ -3175,11 +3174,18 @@ var lessonApp = {
     setDocid: function (docid) {
     },
 
+    onError: function (status, message) {
+        if (status == 'ajax_error/404') {
+            return true;
+        }
+    },
+
     loadLesson: function () {
         var self = this;
         this.lessonLoading = this.lessonId;
         client.storage.getDoc(this.lessonLoading, undefined, function (json) {
             console.log("loaded lesson: " + self.lessonLoading);
+            updateMeta(json);
             self.lessonLoaded = self.lessonLoading;
             renderMarkdown(json.blob.markdown);
         });
@@ -3189,15 +3195,20 @@ var lessonApp = {
         if (!this.lessonLoaded) {
             return {blob: {}};
         }
-        var json = {blob: {
-            version: 1,
-            lessonId: this.lessonLoaded,
-            challenges: []
-        }};
+        var json = {
+            title: this.lessonLoaded,
+            blob: {
+                version: 1,
+                lessonId: this.lessonLoaded,
+                challenges: []
+            }};
         var challenges = $('textarea.challenge', doc.output);
         for (var i = 0; i < challenges.length; i++) {
             // Beware phantom text areas
-            json.blob.challenges[i] = $('#challenge_' + i).val();
+            if (challenges[i].id == '') {
+                continue;
+            }
+            json.blob.challenges.push(challenges[i].value);
         }
         return json;
     },
@@ -3208,10 +3219,16 @@ var lessonApp = {
     },
 
     updateChallenges: function (json) {
+        if (json.blob.challenges == undefined) {
+            return;
+        }
         var challenges = $('textarea.challenge', doc.output);
         for (var i = 0; i < challenges.length; i++) {
-            // Beware phantom textareas!
-            $('#challenge_' + i).val(json.blob.challenges[i]);
+            if (json.blob.challenges[i]) {
+                $('#challenge_' + i)
+                    .val(json.blob.challenges[i])
+                    .trigger('change.dynSiz');
+            }
         }
     },
 
@@ -3264,7 +3281,6 @@ function renderMarkdown(newText) {
         nsdoc.updateScriptSections(doc.output);
         nsdoc.updateChallenges(doc.output);
     } catch (e) {
-        console.log("Render error: " + e.message);
         $(doc.output).text("Render error: " + e.message);
     }
 }
@@ -3632,7 +3648,7 @@ function trimCode(s) {
         }
         s = lines.join('\n');
     }
-    return s;
+    return s + '\n';
 }
 });
 
