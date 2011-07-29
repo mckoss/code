@@ -117,7 +117,8 @@ var lessonApp = {
             if (json.blob.challenges[i]) {
                 $('#challenge_' + i)
                     .val(json.blob.challenges[i])
-                    .trigger('change.dynSiz');
+                    .trigger('change.dynSiz')
+                    .trigger('keyup');
             }
         }
     },
