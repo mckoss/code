@@ -3305,7 +3305,7 @@ function onChallenge(event, challengeNumber, data) {
     switch (event) {
     case 'running':
         status.runCount = (status.runCount || 0) + 1;
-         if (status.runCount % 10 == 0) {
+         if (status.runCount % 10 == 1) {
              logging.log('running', types.extend({challenge: challengeNumber}, status));
         }
         break;
@@ -3315,7 +3315,8 @@ function onChallenge(event, challengeNumber, data) {
         status.total = data.total;
         if (data.passed > status.passed) {
             status.passed = data.passed;
-            logging.log('pass', types.extend({challenge: challengeNumber}, status));
+            var eventType = (status.passed == status.total) ? 'complete' : 'progress';
+            logging.log(eventType, types.extend({challenge: challengeNumber}, status));
         }
         break;
     }
@@ -3759,7 +3760,7 @@ function init(_username, _storage, _scope) {
 
 function log(eventName, data) {
     var logAs = username || 'anonymous';
-    var obj = types.extend(data, {event: eventName, scope: scope, ms: new Date().getTime()});
+    var obj = types.extend(data, {event: eventName, scope: scope, time: new Date().toString()});
     console.log("Logging: " + JSON.stringify(obj));
     storage.push(LOG_DOC, logAs, obj);
 }

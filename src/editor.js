@@ -195,7 +195,7 @@ function onChallenge(event, challengeNumber, data) {
     switch (event) {
     case 'running':
         status.runCount = (status.runCount || 0) + 1;
-         if (status.runCount % 10 == 0) {
+         if (status.runCount % 10 == 1) {
              logging.log('running', types.extend({challenge: challengeNumber}, status));
         }
         break;
@@ -205,7 +205,8 @@ function onChallenge(event, challengeNumber, data) {
         status.total = data.total;
         if (data.passed > status.passed) {
             status.passed = data.passed;
-            logging.log('pass', types.extend({challenge: challengeNumber}, status));
+            var eventType = (status.passed == status.total) ? 'complete' : 'progress';
+            logging.log(eventType, types.extend({challenge: challengeNumber}, status));
         }
         break;
     }
