@@ -1,15 +1,12 @@
 {
   "files": {
-    "stage-all.js": [
-      "src/namespace-plus.js",
-      { "path": "src/stage.js", "namespace": "com.pageforest.code.stage" }
-    ],
     "editor-all.js": [
       "src/namespace-plus.js",
       "src/showdown.js",
       "src/qunit.js",
       { "path": "src/editor.js", "namespace": "com.pageforest.code.editor" },
       { "path": "src/nsdoc.js", "namespace": "org.startpad.nsdoc" },
+      { "path": "src/logging.js", "namespace": "org.startpad.logging" },
       "src/autoresize.jquery.js"
     ],
     "tester-all.js": [

@@ -201,7 +201,7 @@ function commentFromValue(value) {
     return '// ' + value.toString();
 }
 
-function updateChallenges(context) {
+function updateChallenges(context, onChallenge) {
     var challenges = $('script.challenge', context);
     var tests = [];
     var printed;
@@ -270,6 +270,7 @@ function updateChallenges(context) {
                 switch (data.type) {
                 case 'start':
                     $results.append('<div class="test-status">Running tests.</div>');
+                    onChallenge('running', i);
                     break;
                 case 'error':
                     $results.append('<div class="test-status FAIL">Code error: {0}</div>'
@@ -284,6 +285,7 @@ function updateChallenges(context) {
                                         data.info.passed,
                                         data.info.total));
                     terminateTest();
+                    onChallenge('done', i, {passed: data.info.passed, total: data.info.total});
                     break;
                 case 'test':
                     $results.append('<div class="test {0}">{0}: {1}<div>'

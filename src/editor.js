@@ -1,7 +1,9 @@
 var clientLib = require('com.pageforest.client');
 var dom = require('org.startpad.dom');
+var types = require('org.startpad.types');
 var nsdoc = require('org.startpad.nsdoc');
 var markdown = new Showdown.converter();
+var logging = require('org.startpad.logging');
 
 exports.extend({
     'onEditorReady': onEditorReady,
@@ -14,6 +16,7 @@ var lastText = "";
 var syncTime = 5;
 var editVisible = false;
 var editorInitialized = false;
+var challengeStatus = [];
 
 var editorApp = {
     onSaveSuccess: function (json) {
@@ -58,6 +61,7 @@ var lessonApp = {
             return undefined;
         }
 
+        logging.init(client.username, client.storage, this.lessonLoaded);
         return client.username + '/' + this.lessonLoaded;
     },
 
@@ -88,9 +92,10 @@ var lessonApp = {
         var json = {
             title: this.lessonLoaded,
             blob: {
-                version: 1,
+                version: 2,
                 lessonId: this.lessonLoaded,
-                challenges: []
+                challenges: [],
+                status: challengeStatus
             }};
         var challenges = $('textarea.challenge', doc.output);
         for (var i = 0; i < challenges.length; i++) {
@@ -105,18 +110,19 @@ var lessonApp = {
 
     setDoc: function (json) {
         console.log("setDoc");
-        this.updateChallenges(json);
+        this.updateChallenges(json.blob);
     },
 
-    updateChallenges: function (json) {
-        if (json.blob.challenges == undefined) {
+    updateChallenges: function (blob) {
+        if (blob.challenges == undefined) {
             return;
         }
+        challengeStatus = blob.status || [];
         var challenges = $('textarea.challenge', doc.output);
         for (var i = 0; i < challenges.length; i++) {
-            if (json.blob.challenges[i]) {
+            if (blob.challenges[i]) {
                 $('#challenge_' + i)
-                    .val(json.blob.challenges[i])
+                    .val(blob.challenges[i])
                     .trigger('change.dynSiz')
                     .trigger('keyup');
             }
@@ -127,6 +133,7 @@ var lessonApp = {
         var self = this;
         this.hasUserDoc = false;
         if (username) {
+            // TODO: Don't write doc each time - test to see if need be created?
             client.storage.putDoc(username,
                                   {title: 'Code Challenges for ' + username,
                                    blob: {
@@ -170,10 +177,37 @@ function renderMarkdown(newText) {
     try {
         doc.output.innerHTML = markdown.makeHtml(newText);
         nsdoc.updateScriptSections(doc.output);
-        nsdoc.updateChallenges(doc.output);
+        nsdoc.updateChallenges(doc.output, onChallenge);
     } catch (e) {
         $(doc.output).text("Render error: " + e.message);
         console.log("Render error: " + e.message + '\n' + e.stack);
+    }
+}
+
+function onChallenge(event, challengeNumber, data) {
+    var status;
+    if (challengeStatus[challengeNumber] == undefined) {
+        challengeStatus[challengeNumber] = {};
+    }
+    status = challengeStatus[challengeNumber];
+
+    console.log("onChallenge (" + challengeNumber + "): " + event + ', ' + data);
+    switch (event) {
+    case 'running':
+        status.runCount = (status.runCount || 0) + 1;
+         if (status.runCount % 10 == 0) {
+             logging.log('running', types.extend({challenge: challengeNumber}, status));
+        }
+        break;
+    case 'done':
+        status.passed = status.passed || 0;
+        var oldPassed = status.passed;
+        status.total = data.total;
+        if (data.passed > status.passed) {
+            status.passed = data.passed;
+            logging.log('pass', types.extend({challenge: challengeNumber}, status));
+        }
+        break;
     }
 }
 
