@@ -206,8 +206,6 @@ function updateChallenges(context) {
     var tests = [];
     var printed;
 
-    console.log("updateChallenges");
-
     function onChallengeChange(i) {
         var test = tests[i];
         var code = test.textarea.value;
@@ -216,16 +214,20 @@ function updateChallenges(context) {
         }
 
         var timeStart = new Date().getTime();
-        if (timeStart - test.timeStart < EXEC_TIME) {
+        if (timeStart - test.timeStart <= EXEC_TIME) {
             if (!test.deferTimer) {
                 test.deferTimer = setTimeout(onChallengeChange.curry(i), EXEC_TIME);
             }
             return;
         }
 
+        if (test.deferTimer) {
+            clearTimeout(test.deferTimer);
+            test.deferTimer = undefined;
+        }
+
         test.timeStart = timeStart;
         test.codeLast = code;
-
 
         $('#test_' + i).empty();
         $('#print_' + i).addClass('unused');
@@ -237,10 +239,6 @@ function updateChallenges(context) {
             if (test.hangTimer) {
                 clearTimeout(test.hangTimer);
                 test.hangTimer = undefined;
-            }
-            if (test.deferTimer) {
-                clearTimeout(test.deferTimer);
-                test.deferTimer = undefined;
             }
             if (test.tester) {
                 test.tester.terminate();
