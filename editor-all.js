@@ -3353,6 +3353,8 @@ var reFuncName = /function\s+(\S+)\s*\(/;
 var reComma = /\s*,\s/;
 
 var WRITE_LIMIT = 1000;
+var HANG_TIME = 10000;
+var EXEC_TIME = 1000;
 
 function functionDoc(name, func) {
     var s = new base.StBuf();
@@ -3549,29 +3551,43 @@ function updateChallenges(context) {
         if (code == test.codeLast) {
             return;
         }
+
+        var timeStart = new Date().getTime();
+        if (timeStart - test.timeStart < EXEC_TIME) {
+            if (!test.deferTimer) {
+                test.deferTimer = setTimeout(onChallengeChange.curry(i), EXEC_TIME);
+            }
+            return;
+        }
+
+        test.timeStart = timeStart;
         test.codeLast = code;
+
 
         $('#test_' + i).empty();
         $('#print_' + i).addClass('unused');
         $('code', '#print_' + i).empty();
         test.sep = '';
         test.writes = 0;
-        if (test.hangTimer) {
-            clearTimeout(test.hangTimer);
-            test.hangTimer = undefined;
-        }
 
         function terminateTest() {
-            clearTimeout(test.hangTimer);
-            test.hangTimer = undefined;
-            test.tester.terminate();
-            test.tester = undefined;
-        }
-
-        try {
+            if (test.hangTimer) {
+                clearTimeout(test.hangTimer);
+                test.hangTimer = undefined;
+            }
+            if (test.deferTimer) {
+                clearTimeout(test.deferTimer);
+                test.deferTimer = undefined;
+            }
             if (test.tester) {
                 test.tester.terminate();
+                test.tester = undefined;
             }
+        }
+
+        terminateTest();
+
+        try {
             $('#test_' + i).append('<div class="test-status">Loading code.</div>');
             test.tester = new Worker('tester-all.js');
             test.tester.postMessage({challenge: i,
@@ -3584,7 +3600,7 @@ function updateChallenges(context) {
                                 'href="http://en.wikipedia.org/wiki/Infinite_loop">' +
                                 'infinite loop</a>...' +
                                 '</div>');
-            }, 10000);
+            }, HANG_TIME);
             test.tester.onmessage = function (event) {
                 // { challenge: number, type: 'start'/'test'/'done'/'error',
                 //   info: {result: string, message: string} }
@@ -3639,7 +3655,8 @@ function updateChallenges(context) {
             prefix: getXMLText('prefix', xml),
             suffix: getXMLText('suffix', xml),
             testCode: getXMLText('test', xml),
-            sep: ''
+            sep: '',
+            timeStart: 0
         };
         var code = getXMLText('code', xml);
         $(challenge).after('<textarea id="challenge_{0}" class="challenge"></textarea>'
