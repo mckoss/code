@@ -3304,6 +3304,10 @@ function onChallenge(event, challengeNumber, data) {
     console.log("onChallenge (" + challengeNumber + "): " + event + ', ' + data);
     switch (event) {
     case 'running':
+        // We don't want to update the running counter until the user's document is dirty
+        if (!client.isDirty()) {
+            return;
+        }
         status.runCount = (status.runCount || 0) + 1;
          if (status.runCount % 10 == 1) {
              logging.log('running', types.extend({challenge: challengeNumber}, status));
