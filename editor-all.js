@@ -3536,9 +3536,6 @@ function commentFromValue(value) {
     return '// ' + value.toString();
 }
 
-var tester;
-var hangTimer;
-
 function updateChallenges(context) {
     var challenges = $('script.challenge', context);
     var tests = [];
@@ -3559,28 +3556,28 @@ function updateChallenges(context) {
         $('code', '#print_' + i).empty();
         test.sep = '';
         test.writes = 0;
-        if (hangTimer) {
-            clearTimeout(hangTimer);
-            hangTimer = undefined;
+        if (test.hangTimer) {
+            clearTimeout(test.hangTimer);
+            test.hangTimer = undefined;
         }
 
         function terminateTest() {
-            clearTimeout(hangTimer);
-            hangTimer = undefined;
-            tester.terminate();
-            tester = undefined;
+            clearTimeout(test.hangTimer);
+            test.hangTimer = undefined;
+            test.tester.terminate();
+            test.tester = undefined;
         }
 
         try {
-            if (tester) {
-                tester.terminate();
+            if (test.tester) {
+                test.tester.terminate();
             }
             $('#test_' + i).append('<div class="test-status">Loading code.</div>');
-            tester = new Worker('tester-all.js');
-            tester.postMessage({challenge: i,
+            test.tester = new Worker('tester-all.js');
+            test.tester.postMessage({challenge: i,
                                 code: test.prefix + code + test.suffix,
                                 test: test.testCode});
-            hangTimer = setTimeout(function () {
+            test.hangTimer = setTimeout(function () {
                 var $results = $('#test_' + i);
                 $results.append('<div class="test-status">You may have an ' +
                                 '<a target="_blank" ' +
@@ -3588,7 +3585,7 @@ function updateChallenges(context) {
                                 'infinite loop</a>...' +
                                 '</div>');
             }, 10000);
-            tester.onmessage = function (event) {
+            test.tester.onmessage = function (event) {
                 // { challenge: number, type: 'start'/'test'/'done'/'error',
                 //   info: {result: string, message: string} }
                 var data = event.data;
