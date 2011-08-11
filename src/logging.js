@@ -22,6 +22,9 @@ function init(_username, _storage, _scope) {
 }
 
 function log(eventName, data) {
+    if (!storage) {
+        return;
+    }
     var logAs = username || 'anonymous';
     var obj = types.extend(data, {event: eventName, scope: scope, time: new Date().toString()});
     console.log("Logging: " + JSON.stringify(obj));

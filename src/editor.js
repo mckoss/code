@@ -61,7 +61,6 @@ var lessonApp = {
             return undefined;
         }
 
-        logging.init(client.username, client.storage, this.lessonLoaded);
         return client.username + '/' + this.lessonLoaded;
     },
 
@@ -81,13 +80,15 @@ var lessonApp = {
             console.log("loaded lesson: " + self.lessonLoading);
             updateMeta(json);
             self.lessonLoaded = self.lessonLoading;
+            logging.init(client.username, client.storage, self.lessonLoaded);
+            logging.log("open");
             renderMarkdown(json.blob.markdown);
         });
     },
 
     getDoc: function() {
         if (!this.lessonLoaded) {
-            return {blob: {}};
+            return {blob: {}, title: "none"};
         }
         var json = {
             title: this.lessonLoaded,
