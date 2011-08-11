@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html manifest="/app.manifest">
+<head>
+<title>Code Lesson</title>
+
+<link rel="icon" type="image/png" href="/images/icon.png" />
+<link rel="apple-touch-icon" href="/images/touch.png" />
+
+<link rel="stylesheet" type="text/css" href="/styles/editor.css" />
+<link rel="stylesheet" type="text/css" href="/lib/beta/css/client.css" />
+
+<script type="text/javascript" src="/lib/beta/js/pf-client.js"></script>
+<script type="text/javascript" src="/editor-all.js"></script>
+
+<script type="text/javascript">
+  var logging = namespace.org.startpad.logging;
+  var clientLib = namespace.com.pageforest.client;
+
+  $(document).ready(function () {
+    var client = new clientLib.Client();
+    logging.init(client.username, client.storage);
+    logging.getUsers(onUsers);
+  });
+
+  function onUsers(users) {
+    $('#users').text(users.join(', '));
+
+    for (var i = 0; i < users.length; i++) {
+       logging.getUserLog(users[i], onUserLog);
+    }
+  }
+
+  function onUserLog(user, data) {
+    $('#logs').append("<h1>" + user + "</h1>\n" + JSON.stringify(data, undefined, 4));
+  }
+</script>
+
+<script>
+</script>
+</head>
+
+<body>
+   Users: <span id="users"></span>.
+   <pre id="logs">
+   </pre>
+</body>
+</html>
