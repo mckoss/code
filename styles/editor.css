@@ -45,10 +45,13 @@ span.menu-bar {
 
 textarea.challenge {
   background-color: #F5F5D0;  
-  padding: 5px 0px;
+  padding: 10px;
   border-radius:5px;
   border-color:#AAAAAA;
   outline-color: #BBFF88;
+  box-sizing: border-box;
+  -webkit-box-sizing:border-box;
+  -moz-box-sizing: border-box;
 }
 
 
