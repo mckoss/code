@@ -44,7 +44,8 @@ span.menu-bar {
 #page.edit #outputBlock { width: 48%; float: left; margin: 0; }
 
 textarea.challenge {
-  background-color: #FFFFFF;  
+  background-color: #000000; 
+  color:#00FF00; 
   padding: 10px;
   border-radius:5px;
   border-width:2px;
