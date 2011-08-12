@@ -83,12 +83,13 @@ var lessonApp = {
             logging.init(client.username, client.storage, self.lessonLoaded);
             logging.log("open");
             renderMarkdown(json.blob.markdown);
+            self.lessonJustLoaded = true;
         });
     },
 
     getDoc: function() {
         if (!this.lessonLoaded) {
-            return {blob: {}, title: "none"};
+            return undefined;
         }
         var json = {
             title: this.lessonLoaded,
@@ -106,11 +107,16 @@ var lessonApp = {
             }
             json.blob.challenges.push(challenges[i].value);
         }
+        if (this.lessonJustLoaded) {
+            setTimeout(function() {
+                client.setCleanDoc();
+            }, 1);
+            this.lessonJustLoaded = false;
+        }
         return json;
     },
 
     setDoc: function (json) {
-        console.log("setDoc");
         this.updateChallenges(json.blob);
     },
 
@@ -133,6 +139,7 @@ var lessonApp = {
     onUserChange: function (username) {
         var self = this;
         this.hasUserDoc = false;
+        logging.init(client.username, client.storage, this.lessonLoaded);
         if (username) {
             // TODO: Don't write doc each time - test to see if need be created?
             client.storage.putDoc(username,
@@ -192,7 +199,6 @@ function onChallenge(event, challengeNumber, data) {
     }
     status = challengeStatus[challengeNumber];
 
-    console.log("onChallenge (" + challengeNumber + "): " + event + ', ' + data);
     switch (event) {
     case 'running':
         // We don't want to update the running counter until the user's document is dirty

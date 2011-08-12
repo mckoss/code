@@ -1,12 +1,12 @@
 var clientLib = require('com.pageforest.client');
 var types = require('org.startpad.types');
+var cookies = require('org.startpad.cookies');
 require('org.startpad.string').patch();
-var random = require('org.startpad.random');
 
 var LOG_DOC = '_logs';
 
 var username;
-var initialUsername;
+var lastUsername;
 var storage;
 var scope;
 
@@ -18,22 +18,27 @@ exports.extend({
 });
 
 function init(_username, _storage, _scope) {
-    if (!initialUsername && username) {
-        initialUsername = username;
-    }
-    username = _username || 'anon' + random.randomString(20);
+    username = _username;
     storage = _storage;
     scope = _scope;
 }
 
 function log(eventName, data) {
-    if (!storage) {
+    if (!storage || !scope) {
         return;
     }
-    var logAs = username || 'anonymous';
-    var obj = types.extend(data, {event: eventName, scope: scope, time: new Date().toString()});
+    username = username || cookies.getCookie('logging-id') || 'anon-' + storage.client.uid;
+    var obj = types.extend(data, {event: eventName,
+                                  scope: scope,
+                                  time: new Date().toString(),
+                                  lastUsername: lastUsername != username ? lastUsername : undefined
+                                 });
+    if (lastUsername != username) {
+        lastUsername = username;
+    }
+    cookies.setCookie('logging-id', username, 30);
     console.log("Logging: " + JSON.stringify(obj));
-    storage.push(LOG_DOC, logAs, obj);
+    storage.push(LOG_DOC, username, obj);
 }
 
 function getUsers(callback) {
