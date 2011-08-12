@@ -32,13 +32,12 @@
       <textarea id="editor"></textarea>
     </div>
 
-    <div id="outputBlock">
+    <div id="outputBlock" class="outputBlock">
       <div id="output"></div>
 
     </div>
 
     <div id="footer">
-      <hr/>
       <a target="_blank" href="http://daringfireball.net/projects/markdown/syntax">Markdown Help</a> |
       <a target="_blank" href="https://github.com/mckoss/code">Source Code</a> |
       <a href="http://www.pageforest.com">Pageforest.com</a>

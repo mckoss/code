@@ -2295,10 +2295,12 @@ namespace.module('org.startpad.logging', function (exports, require) {
 var clientLib = require('com.pageforest.client');
 var types = require('org.startpad.types');
 require('org.startpad.string').patch();
+var random = require('org.startpad.random');
 
 var LOG_DOC = '_logs';
 
 var username;
+var initialUsername;
 var storage;
 var scope;
 
@@ -2310,7 +2312,10 @@ exports.extend({
 });
 
 function init(_username, _storage, _scope) {
-    username = _username;
+    if (!initialUsername && username) {
+        initialUsername = username;
+    }
+    username = _username || 'anon' + random.randomString(20);
     storage = _storage;
     scope = _scope;
 }
