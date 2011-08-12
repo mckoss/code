@@ -3,17 +3,21 @@ body {
   padding: 0;
   font-family: Verdana, Arial, Helvetica, sans-serif;
   font-size: 100%;
-  background: #ebebeb url("/images/gradient.jpg") repeat-x left top;
+  color: #552200;
+  background: #ebebeb url("/images/bamboo.jpg") repeat;
+
 }
 
 div { padding:0; margin:0; }
 p { margin: 0 0 8px 0; line-height: 140%; }
-h1, h2, h3, h4, h5 { margin: 5px 0; }
+h1, h2, h3, h4, h5 { margin: 5px 0; background-color:rgba(200,255,150,1); border-radius:5px; padding:8px; }
 code { font-family: "Courier New", Courier, monospace; }
-a { color: #444; }
-a:visited { color: #888; }
+a { color: #228; }
+a:visited { color: #828; }
 a:hover { color: #000; }
 li { line-height: 120%; margin-bottom: 8px; }
+
+div.outputBlock {background-color:rgb(210,255,150); border-radius:5px; padding:8px 30px 8px 8px; }
 
 #page { width: 90%; margin: auto; }
 #page:not(.edit) .if_edit { display: none; }
@@ -22,7 +26,7 @@ li { line-height: 120%; margin-bottom: 8px; }
   border-bottom: 2px solid black;
   padding-bottom: 4px;
   position: relative;
-  width: 100%;
+
 }
 
 span.menu-bar {
@@ -33,15 +37,25 @@ span.menu-bar {
   color: gray;
   font-size: 0.5em;
   text-align: right;
+  padding:15px;
 }
 
 #inputBlock { width: 48%; float: right; }
 #page.edit #outputBlock { width: 48%; float: left; margin: 0; }
 
+textarea.challenge {
+  background-color: #F5F5D0;  
+  padding: 5px 0px;
+  border-radius:5px;
+  border-color:#AAAAAA;
+  outline-color: #BBFF88;
+}
+
+
 #output pre {
   border: 2px solid gray;
   display: block;
-  background-color: #F5F5DC;
+  background-color: #F5F5D0;
   padding: 5px 10px;
   overflow: hidden;
 }
@@ -84,17 +98,20 @@ textarea {
   clear: both;
   margin: 10px 0;
   text-align:center;
+  background-color:rgba(210,255,150,1); 
+  border-radius:5px; 
+  padding:8px; 
 }
 
 div.test-results {
   border: 2px solid gray;
   display: block;
-  background-color: #F5F5DC;
+  background-color: #F5F5D0;
   padding: 5px 10px;
   overflow: hidden;
 }
 
 div.FAIL { color: red; }
 div.PASS { color: green; }
-div.test-status { font-weight: bold; }
+div.test-status { font-weight: bold;}
 #output .unused { display: none; }
