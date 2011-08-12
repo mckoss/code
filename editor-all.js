@@ -1743,12 +1743,13 @@ var lessonApp = {
             logging.init(client.username, client.storage, self.lessonLoaded);
             logging.log("open");
             renderMarkdown(json.blob.markdown);
+            self.lessonJustLoaded = true;
         });
     },
 
     getDoc: function() {
         if (!this.lessonLoaded) {
-            return {blob: {}, title: "none"};
+            return undefined;
         }
         var json = {
             title: this.lessonLoaded,
@@ -1766,11 +1767,16 @@ var lessonApp = {
             }
             json.blob.challenges.push(challenges[i].value);
         }
+        if (this.lessonJustLoaded) {
+            setTimeout(function() {
+                client.setCleanDoc();
+            }, 1);
+            this.lessonJustLoaded = false;
+        }
         return json;
     },
 
     setDoc: function (json) {
-        console.log("setDoc");
         this.updateChallenges(json.blob);
     },
 
@@ -1793,6 +1799,7 @@ var lessonApp = {
     onUserChange: function (username) {
         var self = this;
         this.hasUserDoc = false;
+        logging.init(client.username, client.storage, this.lessonLoaded);
         if (username) {
             // TODO: Don't write doc each time - test to see if need be created?
             client.storage.putDoc(username,
@@ -1852,7 +1859,6 @@ function onChallenge(event, challengeNumber, data) {
     }
     status = challengeStatus[challengeNumber];
 
-    console.log("onChallenge (" + challengeNumber + "): " + event + ', ' + data);
     switch (event) {
     case 'running':
         // We don't want to update the running counter until the user's document is dirty
@@ -2294,11 +2300,13 @@ function trimCode(s) {
 namespace.module('org.startpad.logging', function (exports, require) {
 var clientLib = require('com.pageforest.client');
 var types = require('org.startpad.types');
+var cookies = require('org.startpad.cookies');
 require('org.startpad.string').patch();
 
 var LOG_DOC = '_logs';
 
 var username;
+var lastUsername;
 var storage;
 var scope;
 
@@ -2316,13 +2324,21 @@ function init(_username, _storage, _scope) {
 }
 
 function log(eventName, data) {
-    if (!storage) {
+    if (!storage || !scope) {
         return;
     }
-    var logAs = username || 'anonymous';
-    var obj = types.extend(data, {event: eventName, scope: scope, time: new Date().toString()});
+    username = username || cookies.getCookie('logging-id') || 'anon-' + storage.client.uid;
+    var obj = types.extend(data, {event: eventName,
+                                  scope: scope,
+                                  time: new Date().toString(),
+                                  lastUsername: lastUsername != username ? lastUsername : undefined
+                                 });
+    if (lastUsername != username) {
+        lastUsername = username;
+    }
+    cookies.setCookie('logging-id', username, 30);
     console.log("Logging: " + JSON.stringify(obj));
-    storage.push(LOG_DOC, logAs, obj);
+    storage.push(LOG_DOC, username, obj);
 }
 
 function getUsers(callback) {
