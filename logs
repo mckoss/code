@@ -6,7 +6,7 @@
 <link rel="icon" type="image/png" href="/images/icon.png" />
 <link rel="apple-touch-icon" href="/images/touch.png" />
 
-<link rel="stylesheet" type="text/css" href="/styles/editor.css" />
+
 <link rel="stylesheet" type="text/css" href="/lib/beta/css/client.css" />
 
 <script type="text/javascript" src="/lib/beta/js/pf-client.js"></script>

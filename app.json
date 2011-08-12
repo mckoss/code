@@ -8,9 +8,10 @@
   ],
   "referers": [],
   "secureData": false,
-  "size": 254,
-  "tags": [ ],
+  "tags": [],
   "title": "Code Playground",
   "url": "http://code.pageforest.com/lesson",
-  "writers": ["cwkoss"]
+  "writers": [
+    "cwkoss"
+  ]
 }

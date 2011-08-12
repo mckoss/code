@@ -4,7 +4,7 @@ body {
   font-family: Verdana, Arial, Helvetica, sans-serif;
   font-size: 100%;
   color: #552200;
-  background: #ebebeb url("/images/bamboo.jpg") repeat;
+  background: #000 url("/images/bamboo.jpg") repeat;
 
 }
 
@@ -17,7 +17,7 @@ a:visited { color: #828; }
 a:hover { color: #000; }
 li { line-height: 120%; margin-bottom: 8px; }
 
-div.outputBlock {background-color:rgb(210,255,150); border-radius:5px; padding:8px 30px 8px 8px; }
+#outputBlock {background-color:rgb(210,255,150); border-radius:5px; padding:8px 30px 8px 8px; }
 
 #page { width: 90%; margin: auto; }
 #page:not(.edit) .if_edit { display: none; }
