@@ -5,19 +5,26 @@ body {
   font-size: 100%;
   color: #552200;
   background: #000 url("/images/bamboo.jpg") repeat;
-
 }
 
 div { padding:0; margin:0; }
 p { margin: 0 0 8px 0; line-height: 140%; }
-h1, h2, h3, h4, h5 { margin: 5px 0; background-color:rgba(200,255,150,1); border-radius:5px; padding:8px; }
+h1, h2, h3, h4, h5 {
+  margin: 5px 0;
+  background: rgb(210,255,150) url("/images/paper.jpg") repeat;
+  border-radius:5px; padding:8px;
+}
 code { font-family: "Courier New", Courier, monospace; }
 a { color: #228; }
 a:visited { color: #828; }
 a:hover { color: #000; }
 li { line-height: 120%; margin-bottom: 8px; }
 
-#outputBlock {background-color:rgb(210,255,150); border-radius:5px; padding:8px 30px 8px 8px; }
+#outputBlock {
+  background: rgb(210,255,150) url("/images/paper.jpg") repeat;
+  border-radius:5px;
+  padding:8px 30px 8px 8px;
+}
 
 #page { width: 90%; margin: auto; }
 #page:not(.edit) .if_edit { display: none; }
@@ -44,8 +51,8 @@ span.menu-bar {
 #page.edit #outputBlock { width: 48%; float: left; margin: 0; }
 
 textarea.challenge {
-  background-color: #000000; 
-  color:#00FF00; 
+  background-color: #000000;
+  color:#00FF00;
   padding: 10px;
   border-radius:5px;
   border-width:2px;
@@ -103,9 +110,9 @@ textarea {
   clear: both;
   margin: 10px 0;
   text-align:center;
-  background-color:rgba(210,255,150,1); 
-  border-radius:5px; 
-  padding:8px; 
+  background: rgb(210,255,150) url("/images/paper.jpg") repeat;
+  border-radius:5px;
+  padding:8px;
 }
 
 div.test-results {
