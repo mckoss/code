@@ -24,12 +24,10 @@
     <h1 id="page-heading">
       <span id="title">New Lesson</span>
       <span class="menu-bar">
+        <i id="signinLabel">Save your progress:</i>
+        <input type="button" id="signin" value="Sign In"/>
       </span>
     </h1>
-
-    <div class="if_edit" id="inputBlock">
-      <textarea id="editor"></textarea>
-    </div>
 
     <div id="outputBlock">
       <div id="output"></div>

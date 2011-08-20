@@ -67,10 +67,15 @@ var lessonApp = {
     setDocid: function (docid) {
     },
 
+    beforeUnload: function () {
+        setTimeout(function () {
+            client.save();
+        }, 1);
+        return "Stay on this page to save your changes.";
+    },
+
     onError: function (status, message) {
-        if (status == 'ajax_error/404') {
-            return true;
-        }
+        alert(message);
     },
 
     loadLesson: function () {
@@ -141,6 +146,8 @@ var lessonApp = {
         this.hasUserDoc = false;
         logging.init(client.username, client.storage, this.lessonLoaded);
         if (username) {
+            $(doc.signinLabel).text("Welcome, {0}!".format(client.username));
+            $(doc.signin).val('Sign Out');
             // TODO: Don't write doc each time - test to see if need be created?
             client.storage.putDoc(username,
                                   {title: 'Code Challenges for ' + username,
@@ -149,6 +156,9 @@ var lessonApp = {
                                    }}, undefined, function () {
                 self.hasUserDoc = true;
             });
+        } else {
+            $(doc.signinLabel).text("Save your progress:");
+            $(doc.signin).val('Sign In');
         }
     }
 };
@@ -167,8 +177,14 @@ function onEditorReady() {
 function onLessonReady() {
     handleAppCache();
     doc = dom.bindIDs();
-    client = new clientLib.Client(lessonApp);
-    client.addAppBar();
+    client = new clientLib.Client(lessonApp, {saveInterval: 15});
+    $(doc.signin).click(function () {
+        if (client.username) {
+            client.signOut();
+        } else {
+            client.signIn();
+        }
+    });
 }
 
 function onEditChange() {
