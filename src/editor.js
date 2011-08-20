@@ -75,6 +75,9 @@ var lessonApp = {
     },
 
     onError: function (status, message) {
+        if (status == 'ajax_error/404') {
+            return;
+        }
         alert(message);
     },
 
