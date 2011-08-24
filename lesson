@@ -6,6 +6,7 @@
 <link rel="icon" type="image/png" href="/images/icon.png" />
 <link rel="apple-touch-icon" href="/images/touch.png" />
 
+<link rel="stylesheet" href="/styles/bootstrap.css" />
 <link rel="stylesheet" type="text/css" href="/styles/editor.css" />
 <link rel="stylesheet" type="text/css" href="/styles/qunit.css" />
 <link rel="stylesheet" type="text/css" href="/lib/beta/css/client.css" />
@@ -20,21 +21,36 @@
 </head>
 
 <body>
-  <div id="page">
-    <h1 id="page-heading">
-      <span id="title">New Lesson</span>
-      <span class="menu-bar">
-        <i id="signinLabel">Save your progress:</i>
-        <input type="button" id="signin" value="Sign In"/>
-      </span>
-    </h1>
+  <div class="topbar">
+    <div class="fill">
+      <div class="container">
+        <h3><a href="/">Code Sensei</a></h3>
+        <ul>
+          <li><a href="#">About</a></li>
+        </ul>
+        <ul class="nav secondary-nav">
+          <li><a href="#">Sign In</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-    <div id="outputBlock">
-      <div id="output"></div>
-
+  <div class="container" id="page">
+    <div class="row">
+      <h1 id="page-heading">
+        <span id="title">New Lesson</span>
+        <span class="menu-bar">
+          <i id="signinLabel">Save your progress:</i>
+          <input type="button" id="signin" value="Sign In"/>
+        </span>
+      </h1>
     </div>
 
-    <div id="footer">
+    <div class="row" id="outputBlock">
+      <div id="output"></div>
+    </div>
+
+    <div class="row" id="footer">
       <a href="/lesson#challenge-toc">Table of Contents</a> |
       <a href="http://www.pageforest.com">Pageforest.com</a>
     </div>

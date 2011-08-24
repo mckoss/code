@@ -6,6 +6,7 @@
 <link rel="icon" type="image/png" href="/images/icon.png" />
 <link rel="apple-touch-icon" href="/images/touch.png" />
 
+<link rel="stylesheet" href="/styles/bootstrap.css" />
 <link rel="stylesheet" type="text/css" href="/styles/editor.css" />
 <link rel="stylesheet" type="text/css" href="/styles/qunit.css" />
 <link rel="stylesheet" type="text/css" href="/lib/beta/css/client.css" />
@@ -20,24 +21,26 @@
 </head>
 
 <body>
-  <div id="page">
-    <h1 id="page-heading">
+  <div class="container" id="page">
+    <h1 class="row" id="page-heading">
       <span id="title">New Lesson</span>
       <span class="menu-bar">
         <input type="button" id="edit" value="Edit"/>
       </span>
     </h1>
 
-    <div class="if_edit" id="inputBlock">
-      <textarea id="editor"></textarea>
+    <div class="row">
+      <div class="if_edit" id="inputBlock">
+        <textarea id="editor"></textarea>
+      </div>
+
+      <div id="outputBlock" class="outputBlock">
+        <div id="output"></div>
+
+      </div>
     </div>
 
-    <div id="outputBlock" class="outputBlock">
-      <div id="output"></div>
-
-    </div>
-
-    <div id="footer">
+    <div class="row" id="footer">
       <a target="_blank" href="http://daringfireball.net/projects/markdown/syntax">Markdown Help</a> |
       <a target="_blank" href="https://github.com/mckoss/code">Source Code</a> |
       <a href="http://www.pageforest.com">Pageforest.com</a>
