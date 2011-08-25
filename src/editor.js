@@ -149,8 +149,8 @@ var lessonApp = {
         this.hasUserDoc = false;
         logging.init(client.username, client.storage, this.lessonLoaded);
         if (username) {
-            $(doc.signinLabel).text("Welcome, {0}!".format(client.username));
-            $(doc.signin).val('Sign Out');
+            $('body').addClass('has-user');
+            $(doc.welcome).text(client.username);
             // TODO: Don't write doc each time - test to see if need be created?
             client.storage.putDoc(username,
                                   {title: 'Code Challenges for ' + username,
@@ -160,8 +160,7 @@ var lessonApp = {
                 self.hasUserDoc = true;
             });
         } else {
-            $(doc.signinLabel).text("Save your progress:");
-            $(doc.signin).val('Sign In');
+            $('body').removeClass('has-user');
         }
     }
 };
@@ -182,11 +181,12 @@ function onLessonReady() {
     doc = dom.bindIDs();
     client = new clientLib.Client(lessonApp, {saveInterval: 15});
     $(doc.signin).click(function () {
-        if (client.username) {
-            client.signOut();
-        } else {
-            client.signIn();
-        }
+        client.signIn();
+        return false;
+    });
+    $(doc.signout).click(function () {
+        client.signOut();
+        return false;
     });
 }
 

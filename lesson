@@ -29,24 +29,16 @@
           <li><a href="#">About</a></li>
         </ul>
         <ul class="nav secondary-nav">
-          <li><a href="#">Sign In</a></li>
+          <li class="if-user"><a href="#" id="signout">Welcome, <span id="welcome"></span></a></li>
+          <li class="if-not-user"><a href="#" id="signin">Sign In</a></li>
         </ul>
       </div>
     </div>
   </div>
 
   <div class="container" id="page">
-    <div class="row">
-      <h1 id="page-heading">
-        <span id="title">New Lesson</span>
-        <span class="menu-bar">
-          <i id="signinLabel">Save your progress:</i>
-          <input type="button" id="signin" value="Sign In"/>
-        </span>
-      </h1>
-    </div>
-
     <div class="row" id="outputBlock">
+      <h1 id="title">New Lesson</h1>
       <div id="output"></div>
     </div>
 

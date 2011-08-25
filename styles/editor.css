@@ -5,14 +5,16 @@ html {
 body {
   background: transparent;
 }
+body:not(.has-user) .if-user { display: none;}
+body.has-user .if-not-user { display: none; }
 
 #outputBlock {
   background: rgb(210,255,150) url("/images/paper.jpg") repeat;
   border-radius:5px;
   padding:8px 30px 8px 8px;
+  margin-top: 40px;
 }
 
-#page: { margin-top: 40px; }
 #page:not(.edit) .if_edit { display: none; }
 
 span.menu-bar {
