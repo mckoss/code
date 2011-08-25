@@ -88,12 +88,9 @@ textarea {
 }
 
 #footer {
-  clear: both;
-  margin: 10px 0;
   text-align:center;
   background: rgb(210,255,150) url("/images/paper.jpg") repeat;
-  border-radius:5px;
-  padding:8px;
+  padding-bottom: 10px;
 }
 
 div.test-results {

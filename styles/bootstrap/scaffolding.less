@@ -48,12 +48,12 @@
 // -----------------
 
 html, body {
-  background-color: #fff;
+  background-color: @backgroundColor;
 }
 body {
   margin: 0;
   #font > .sans-serif(normal,@basefont,@baseline);
-  color: @gray;
+  color: @bodyColor;
   text-rendering: optimizeLegibility;
 }
 
@@ -171,7 +171,7 @@ a {
 button.btn,
 input[type=submit].btn {
   &::-moz-focus-inner {
-  	padding: 0;
-  	border: 0;
+    padding: 0;
+    border: 0;
   }
 }
