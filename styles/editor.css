@@ -1,7 +1,106 @@
+html {
+  background: #000 url("/images/bamboo.jpg") repeat;
+}
+
+body {
+  background: transparent;
+}
+
+#outputBlock {
+  background: rgb(210,255,150) url("/images/paper.jpg") repeat;
+  border-radius:5px;
+  padding:8px 30px 8px 8px;
+}
+
+#page: { margin-top: 40px; }
 #page:not(.edit) .if_edit { display: none; }
+
+span.menu-bar {
+  position: absolute;
+  display: block;
+  bottom: 3px;
+  right: 0;
+  color: gray;
+  font-size: 0.5em;
+  text-align: right;
+  padding:15px;
+}
 
 #inputBlock { width: 48%; float: right; }
 #page.edit #outputBlock { width: 48%; float: left; margin: 0; }
+
+textarea.challenge {
+  background-color: #000000;
+  color:#00FF00;
+  padding: 10px;
+  border-radius:5px;
+  border-width:2px;
+  border-color:#BB6644;
+  outline-color: #BBFF88;
+  box-sizing: border-box;
+  -webkit-box-sizing:border-box;
+  -moz-box-sizing: border-box;
+}
+
+
+#output pre {
+  border: 2px solid gray;
+  display: block;
+  background-color: #FFFFC0;
+  padding: 5px 10px;
+  overflow: hidden;
+}
+
+#output pre.printed {
+  color: white;
+  background-color: black;
+  max-height: 250px;
+  overflow: auto;
+}
+
+#output table {
+  border-collapse: collapse;
+  border: 1px solid #36362E;
+  margin: 0 0 8px 0;
+}
+
+#output th {
+  border: 1px solid #36362E;
+  padding: 5px;
+  text-style: bold;
+  color: white;
+  background-color: #69695A;
+  text-align: center;
+}
+
+#output td {
+  border: 1px solid #36362E;
+  padding: 5px;
+  background-color: #F5F5DC;
+}
+
+textarea {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  width: 100%;
+}
+
+#footer {
+  clear: both;
+  margin: 10px 0;
+  text-align:center;
+  background: rgb(210,255,150) url("/images/paper.jpg") repeat;
+  border-radius:5px;
+  padding:8px;
+}
+
+div.test-results {
+  border: 2px solid gray;
+  display: block;
+  background-color: #F5F5D0;
+  padding: 5px 10px;
+  overflow: hidden;
+}
 
 div.FAIL { color: red; }
 div.PASS { color: green; }
