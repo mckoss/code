@@ -1,0 +1,58 @@
+<html>
+<head>
+<link rel="stylesheet" href="codedisp.css" type="text/css" />
+<script src="http://code.jquery.com/jquery-1.6.3.js" ></script>
+<script>
+    function setPageState(isSet) {
+        $('body')[isSet ? 'addClass' : 'removeClass']("stage");
+    }
+</script>
+</head>
+<body>
+<div class="everything">
+	<div class="leftbox">
+		<div class="tabbar">
+			<input type="button" class="button" value="Code" onclick="setPageState(false);" />
+			<input type="button" class="button" value="Output" onclick="setPageState(true);" />
+			<input type="button" class="button" id="runbutton" value="Run" onclick="setPageState(true);" />
+		</div>
+		<div class="if-not-stage">
+			<textarea id="codebox">function sampleCode() {
+	return "value";
+}</textarea>
+		</div>
+		<div class="if-stage">
+			<div class="stage">
+				THIS IS A STAGE
+			</div>
+			<div class="console">
+				<textarea id="console">var x = 73;
+>73
+x = x + 1;
+>74</textarea>
+				<input type="text" id="cmdline" value="x = x + 1;" />
+				<input type="button" id="cmdexec" value="Execute" />
+			</div>
+		</div>
+
+	</div>
+	<div class="rightbox">
+		<div class="instructions">
+		    <div class="insthead">
+				Instructions
+			</div>
+			<div class="instbody">
+[ ] - Do something<br>
+[ ] - Do something else<br>
+[ ] - Do a third thang
+			</div>
+			<div class="instpaging">
+				<input type="button" class="button" value="Back" id="back" />
+				3/5
+				<input type="button" class="button" value="Next" id="next" />
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

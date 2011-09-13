@@ -1,0 +1,96 @@
+body.stage .if-not-stage { display: none; }
+body:not(.stage) .if-stage { display: none; }
+#codebox{
+	width:652px;
+	height:622px;
+	margin:8px;
+}
+div.everything{
+	height:668px;
+	width:1024px;
+	margin-left:auto;
+	margin-right:auto;
+}
+div.leftbox {
+	background-color:#0000FF;
+	width:668px;
+	height:100%;
+	float:left;
+}
+div.tabbar{
+	background-color:#00FFFF;
+	width:668px;
+	height:30px;
+}
+#runbutton {
+	float:right;
+}
+div.stage {
+	background-color:#00FF44;
+	width:652px;
+	height:310px;
+	margin:8px;
+}
+div.console {
+	background-color:#44FF00;
+	width:652px;
+	height:304px;
+	margin:8px;
+}
+#console {
+	width:652px;
+	height:282px;
+}
+#cmdline {
+	width:590px;
+	float:left;
+}
+#cmdexec {
+	width:62px;
+	float:left;
+}
+div.rightbox {
+	background-color:#00FF00;
+	width:356px;
+	height:100%;
+	float:left;	
+}
+div.instructions {
+	background-color:#00FF99;
+	width:340px;
+	height:652px;
+	margin:8px;	
+}
+div.insthead {
+	background-color:#99FF00;
+	width:340px;
+	height:22px;
+	text-align:center;
+
+	font-size: 20px;
+}
+div.instbody {
+	background-color:#FF9900;
+	width:324px;
+	height:563px;
+	font-size: 20px;
+	padding:8px;
+}
+div.instpaging {
+	background-color:#FF8888;
+	width:324px;
+	height:35px;
+	font-size: 20px;
+	padding:8px;	
+	text-align:center;
+}
+input.button {
+	margin:5px;
+}
+
+#back {
+	float:left;
+}
+#next{
+	float:right;
+}
